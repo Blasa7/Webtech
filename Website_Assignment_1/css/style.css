@@ -23,11 +23,11 @@ body {
    }
    
 .header {
-     background: url("/images/181261.jpg");
+     background: url("../images/181261.jpg");
      background-size: cover;
      color: #fff;
      text-align: center;
-     padding: 200px 20px;
+     padding: 0px 0px;/*200px 20px;*/
    }
    
 .header__title {
@@ -103,6 +103,11 @@ body {
      color: #000000;
      margin-bottom: 10px;
    }
+
+.section__img{
+     width: 107px;
+     height: 150px;
+}
    
 .text {
      font-size: 1.1rem;
@@ -168,12 +173,21 @@ body {
    }
    
 .footer {
+     position: relative;
      background-color: #e9e9e9;
      color: #777;
      text-align: center;
      padding: 30px;
      font-size: 0.9rem;
    }
+
+.footer__img {
+     position: absolute;
+     right: 50px; 
+     bottom: 25%; 
+     width: auto;  
+     height: 50%; 
+ }
 
     /* W3School and the lecture slides mainly have been used for CSS reference 
     and other websites such as: 
