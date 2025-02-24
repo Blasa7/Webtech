@@ -23,7 +23,8 @@ body {
    }
    
 .header {
-     background: url("../images/181261.jpg");
+     /*background: url("../images/181261.jpg");*/
+     background-image: url("../images/header_background.jpg");
      background-size: cover;
      color: #fff;
      text-align: center;
