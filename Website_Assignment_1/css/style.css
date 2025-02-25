@@ -23,7 +23,6 @@ body {
    }
    
 .header {
-     /*background: url("../images/181261.jpg");*/
      background-image: url("../images/header_background.jpg");
      background-size: cover;
      color: #fff;
@@ -66,7 +65,16 @@ body {
      font-size: 1.2rem;
      transition: color 0.3s;
    }
-   
+
+   /* 
+displays navigation links larger on mobile browsers
+*/
+   @media screen and (max-width: 1050px) {
+     .nav__link {
+          font-size: 4rem;
+     }
+
+}
 .nav__link:hover,
 .nav__link:focus {
      color: #8874be;
