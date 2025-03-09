@@ -18,27 +18,49 @@ class Course{
     description;
 }
 
+var header = document.getElementsByTagName("header")[0];
+var body = document.getElementsByTagName("body")[0];
+var footer = document.getElementsByTagName("footer")[0];
+
+
 var studentInfo;
 
 document.onload = init()
 
 function init(){
     // Header
-    var header = document.getElementsByTagName("header")[0];
+    initHeader();
 
     // Body
-    var body = document.getElementsByTagName("body")[0];
+    initBody();
     
+
+
+    // Footer
+    initFooter();
+}
+
+function initHeader(){
+    const headerTitle = createElemWithText("h1", "Student profile editor");
+    headerTitle.setAttribute("class", "header__title");
+    header.appendChild(headerTitle);
+}
+
+function initBody(){
+    const main = document.createElement("main");
+    body.appendChild(main);
+
     var fileReader = document.createElement("input");
     fileReader.setAttribute("type", "file");
-    body.appendChild(fileReader);
+    main.appendChild(fileReader);
     fileReader.addEventListener("change", handleFileSelection);
 
     studentInfo = document.createElement("section")
-    body.appendChild(studentInfo);
+    main.appendChild(studentInfo);
+}
 
-    // Footer
-    var footer = document.getElementsByTagName("footer")[0];
+function initFooter(){
+
 }
 
 function handleFileSelection(e){
@@ -69,7 +91,8 @@ function showStudent(student){
     let email = createElemWithText("li", "Student email: " + student.email);
     studentInfoList.appendChild(email);
 
-    let photo = createElemWithText("li", "Student photo: " + student.photo);
+    //let photo = createElemWithText("li", "Student photo: " + student.photo);
+    let photo = createImg(student.photo, "A photo of the student.", "section__img")
     studentInfoList.appendChild(photo);
 
     let major = createElemWithText("li", "Student major: " + student.major);
@@ -81,6 +104,7 @@ function showStudent(student){
     //studentInfo.replaceChildren([studentName, studentInfoList])
     studentInfo.appendChild(studentName);
     studentInfo.appendChild(studentInfoList)
+    studentInfo.appendChild(photo)
 }
 
 // Creates a element with the given tag and text contents
@@ -89,6 +113,15 @@ function createElemWithText(tagName, content){
     let text = document.createTextNode(content);
 
     elem.appendChild(text);
+
+    return elem;
+}
+
+function createImg(src, alt, className){
+    let elem = document.createElement("img");
+    elem.setAttribute("src", src);
+    elem.setAttribute("alt", alt);
+    elem.setAttribute("class", className)
 
     return elem;
 }
