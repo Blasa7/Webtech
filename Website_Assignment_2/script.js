@@ -263,9 +263,6 @@ function initMain(){
     body.appendChild(main);
 
     initFileReader();
-
-    studentInfo = document.createElement("section")
-    main.appendChild(studentInfo);
 }
 
 function initFooter(){
