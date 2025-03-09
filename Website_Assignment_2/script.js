@@ -254,6 +254,11 @@ class Course {
     }
 }
 
+var header = document.getElementsByTagName("header")[0];
+var body = document.getElementsByTagName("body")[0];
+var footer = document.getElementsByTagName("footer")[0];
+
+
 var studentInfo;
 
 document.onload = init()
@@ -263,21 +268,38 @@ document.onload = init()
 
 function init() {
     // Header
-    var header = document.getElementsByTagName("header")[0];
+    initHeader();
 
     // Body
-    var body = document.getElementsByTagName("body")[0];
+    initBody();
+    
+
+
+    // Footer
+    initFooter();
+}
+
+function initHeader(){
+    const headerTitle = createElemWithText("h1", "Student profile editor");
+    headerTitle.setAttribute("class", "header__title");
+    header.appendChild(headerTitle);
+}
+
+function initBody(){
+    const main = document.createElement("main");
+    body.appendChild(main);
 
     var fileReader = document.createElement("input");
     fileReader.setAttribute("type", "file");
-    body.appendChild(fileReader);
+    main.appendChild(fileReader);
     fileReader.addEventListener("change", handleFileSelection);
 
     studentInfo = document.createElement("section")
-    body.appendChild(studentInfo);
+    main.appendChild(studentInfo);
+}
 
-    // Footer
-    var footer = document.getElementsByTagName("footer")[0];
+function initFooter(){
+
 }
 
 function handleFileSelection(e) {
