@@ -1,4 +1,4 @@
-//const { json } = require('node:stream/consumers');
+// TODO: Style sheet should all be in js code, header, footer, image and course hover.
 
 class Person {
     #firstName;
@@ -29,22 +29,6 @@ class Person {
         let match = /[A-Z][a-z]*/
 
         return match.test(string);
-    }
-
-    makeElem() {
-        let firstNameElem = createTextInput("First name:");
-        firstNameElem.onchange = () => {
-            this.firstName(firstNameElem.firstChild.nodeValue);
-            firstNameElem.firstChild.nodeValue = this.firstName
-        };
-
-        let lastNameElem = createTextInput("Last name:");
-        lastNameElem.onchange = () => {
-            this.lastName(lastNameElem.firstChild.nodeValue);
-            lastNameElem.firstChild.nodeValue = this.lastName
-        };
-
-        return [firstNameElem, lastNameElem];
     }
 
     stringify() {
@@ -149,18 +133,6 @@ class Student extends Person {
         }
     }
 
-    makeElem() {
-        let elems = super.makeElem();
-
-        let ageElem = createTextInput("Age:");
-        ageElem.onchange = () => {
-            this.age(ageElem.firstChild.nodeValue);
-            ageElem.firstChild.nodeValue = this.age;
-        };
-
-        return elems.concat([ageElem]);
-    }
-
     stringify() {
         // Get the properties from person
         let pers = JSON.parse(super.stringify());
@@ -254,52 +226,59 @@ class Course {
     }
 }
 
-var header = document.getElementsByTagName("header")[0];
 var body = document.getElementsByTagName("body")[0];
-var footer = document.getElementsByTagName("footer")[0];
+var header;
+var main;
+var footer;
 
-
-var studentInfo;
+var student;
 
 document.onload = init()
-
-//createStudentJsonFile();
-
 
 function init() {
     // Header
     initHeader();
 
-    // Body
-    initBody();
-    
-
+    // Main
+    initMain();
 
     // Footer
     initFooter();
 }
 
 function initHeader(){
+    header = document.createElement("header");
+    body.appendChild(header);
+
     const headerTitle = createElemWithText("h1", "Student profile editor");
     headerTitle.setAttribute("class", "header__title");
     header.appendChild(headerTitle);
+
+    //TODO: element picker
 }
 
-function initBody(){
-    const main = document.createElement("main");
+function initMain(){
+    main = document.createElement("main");
     body.appendChild(main);
 
-    var fileReader = document.createElement("input");
-    fileReader.setAttribute("type", "file");
-    main.appendChild(fileReader);
-    fileReader.addEventListener("change", handleFileSelection);
+    initFileReader();
 
     studentInfo = document.createElement("section")
     main.appendChild(studentInfo);
 }
 
 function initFooter(){
+    footer = document.createElement("footer");
+    body.appendChild(footer);
 
+    // TODO: element editor
+}
+
+function initFileReader(){
+    var fileReader = document.createElement("input");
+    fileReader.setAttribute("type", "file");
+    main.appendChild(fileReader);
+    fileReader.addEventListener("change", handleFileSelection);
 }
 
 function handleFileSelection(e) {
@@ -307,22 +286,33 @@ function handleFileSelection(e) {
 
     const reader = new FileReader();
     reader.onload = () => {
-        //let student = parseString(reader.result);
-        let student = Student.parse(reader.result);
-        showStudent(student)
+        student = Student.parse(reader.result);
+        showStudent();
     }
 
     reader.readAsText(file)
 }
 
 // Displays student information in the body
-function showStudent(student) {
+function showStudent() {
+    let nameElem = createElemWithText("h1", student.firstName + " " + student.lastName);
 
-    let form = document.createElement("form");
+    let studentInfo = document.createElement("ul");
 
-    student.makeElem().forEach((value) => { form.appendChild(value) });
+    let age = createElemWithText("li", "Student age: " + student.age);
+    let hobbies = createElemWithText("li", "Student hobbies: " + student.hobbies);
+    let email = createElemWithText("li", "Student email: " + student.email);
+    let major = createElemWithText("li", "Student major: " + student.major);
 
-    studentInfo.appendChild(form);
+    studentInfo.appendChild(age);
+    studentInfo.appendChild(hobbies);
+    studentInfo.appendChild(email);
+    studentInfo.appendChild(major);
+
+    main.appendChild(nameElem);
+    main.appendChild(studentInfo);
+
+    //TODO: image, courses
 }
 
 // Creates a element with the given tag and text contents
@@ -333,22 +323,6 @@ function createElemWithText(tagName, content) {
     elem.appendChild(text);
 
     return elem;
-}
-
-function createTextInput(content) {
-    let elem = document.createElement("input");
-    let text = document.createTextNode(content);
-
-    elem.type = "text";
-    elem.appendChild(text);
-
-    return elem;
-}
-
-function parseString(str) {
-    res = JSON.parse(str);
-
-    return res;
 }
 
 // Used to create the first json file in correct format.
