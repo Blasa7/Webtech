@@ -160,7 +160,7 @@ class Student extends Person {
         student.email = obj.email;
         student.photo = obj.photo;
         student.major = obj.major;
-        student.courses = Course.parse(obj.courses[0]);//obj.courses.map((value) => { Course.parse(value) });
+        student.courses = Course.parse(obj.courses[0]);
 
         return student;
     }
@@ -231,6 +231,7 @@ var header;
 var main;
 var footer;
 
+// Contains all student information.
 var student;
 
 document.onload = init()
