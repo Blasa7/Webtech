@@ -42,6 +42,29 @@ header {
      margin: 0;
      padding: 5px 20px;
    }
+
+.nav {
+     background-color: #8a8a91;
+     height: 40px;
+   }
+.nav__list {
+     list-style: none;
+     display: flex;
+     justify-content: center;
+     margin: 0;
+     padding: 10px;
+   }
+   
+.nav__item {
+     margin: 0 15px;
+   }
+   
+.nav__link {
+     color: #fff;
+     text-decoration: none;
+     font-size: 1.2rem;
+     transition: color 0.3s;
+   }
    
    /*  
    gebruikt 90 % en 1000px max voor responsive design

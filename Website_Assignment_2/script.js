@@ -256,6 +256,26 @@ function initHeader(){
     header.appendChild(headerTitle);
 
     //TODO: element picker
+    let nav = document.createElement("nav");
+    body.appendChild(nav);
+    let list = document.createElement("ul");
+    nav.appendChild(list);
+    nav.setAttribute("class","nav");
+    list.setAttribute("class","nav__list");
+
+    const navBarClasses = ["nav__item","nav__link"]; 
+    const navBar = [["about.html","About us"],["contact.html","Contact us"]];
+    let l = navBar.length;
+    for (let i=0; i<l; i++){
+        const listNode = document.createElement("li");
+        const link = createElemWithText("a",navBar[i][1]);
+        console.log(link.firstChild.nodeValue);
+        listNode.setAttribute("class",navBarClasses[0]);
+        link.setAttribute("class",navBarClasses[1]);
+        link.setAttribute("href",navBar[i][0]); 
+        listNode.appendChild(link);
+        list.appendChild(listNode);
+    }
 }
 
 function initMain(){
