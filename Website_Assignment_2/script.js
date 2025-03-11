@@ -38,7 +38,7 @@ class Person {
         })
     }
 
-    static parse(string){
+    static parse(string) {
         let obj = JSON.parse(string);
 
         let person = new Person();
@@ -48,7 +48,7 @@ class Person {
         return person;
     }
 
-    type(){
+    type() {
         return "Person";
     }
 }
@@ -234,6 +234,11 @@ var footer;
 // Contains all student information.
 var student;
 
+var elemPicker;
+
+var fontSizeInput;
+var fontColorInput;
+
 document.onload = init()
 
 function init() {
@@ -247,7 +252,7 @@ function init() {
     initFooter();
 }
 
-function initHeader(){
+function initHeader() {
     header = document.createElement("header");
     body.appendChild(header);
 
@@ -260,39 +265,93 @@ function initHeader(){
     header.appendChild(nav);
     const list = document.createElement("ul");
     nav.appendChild(list);
-    nav.setAttribute("class","header nav");
-    list.setAttribute("class","nav__list");
+    nav.setAttribute("class", "header nav");
+    list.setAttribute("class", "nav__list");
 
-    const navBarClasses = ["nav__item","nav__link"]; 
-    const navBar = [["about.html","About us"],["contact.html","Contact us"]];
+    const navBarClasses = ["nav__item", "nav__link"];
+    const navBar = [["about.html", "About us"], ["contact.html", "Contact us"]];
     let l = navBar.length;
-    for (let i=0; i<l; i++){
+    for (let i = 0; i < l; i++) {
         const listNode = document.createElement("li");
-        const link = createElemWithText("a",navBar[i][1]);
-        listNode.setAttribute("class",navBarClasses[0]);
-        link.setAttribute("class",navBarClasses[1]);
-        link.setAttribute("href",navBar[i][0]); 
+        const link = createElemWithText("a", navBar[i][1]);
+        listNode.setAttribute("class", navBarClasses[0]);
+        link.setAttribute("class", navBarClasses[1]);
+        link.setAttribute("href", navBar[i][0]);
         listNode.appendChild(link);
         list.appendChild(listNode);
     }
 }
 
-function initMain(){
+function initMain() {
     main = document.createElement("main");
     body.appendChild(main);
 
     initFileReader();
-    initForm(); 
+    initForm();
 }
 
-function initFooter(){
+function initFooter() {
     footer = document.createElement("footer");
     body.appendChild(footer);
 
-    // TODO: element editor
+    initElementPicker();
+    initElementEditor();
 }
 
-function initFileReader(){
+function initElementPicker() {
+    elemPicker = document.createElement("select");
+    //elemPicker.onchange = () => { elemPickerValue = elemPicker.value }
+
+    const bodyOption = createElemWithText("option", "Body");
+    bodyOption.value = "body";
+    elemPicker.appendChild(bodyOption);
+
+    const articleOption = createElemWithText("option", "Article");
+    articleOption.value = "article";
+    elemPicker.appendChild(articleOption);
+
+    const sectionOption = createElemWithText("option", "Section");
+    sectionOption.value = "section";
+    elemPicker.appendChild(sectionOption);
+
+    footer.appendChild(elemPicker);
+}
+
+function initElementEditor() {
+    const elemEditor = document.createElement("form");
+
+    const fontSizeLabel = createElemWithText("label", "Font size:");
+    fontSizeInput = document.createElement("input");
+    fontSizeInput.onchange = setTagFontSize;
+    elemEditor.appendChild(fontSizeLabel);
+    elemEditor.appendChild(fontSizeInput);
+
+    const fontColorLabel = createElemWithText("label", "Font color:");
+    fontColorInput = document.createElement("input")
+    fontColorInput.onchange = setTagColor;
+    elemEditor.appendChild(fontColorLabel);
+    elemEditor.appendChild(fontColorInput);
+
+    footer.appendChild(elemEditor);
+}
+
+function setTagFontSize(){
+    let elems = document.getElementsByTagName(elemPicker.value);
+
+    for (i = 0; i < elems.length; i++){
+        elems.item(i).style.fontSize = fontSizeInput.value;
+    }
+}
+
+function setTagColor(){
+    let elems = document.getElementsByTagName(elemPicker.value);
+
+    for (i = 0; i < elems.length; i++){
+        elems.item(i).style.color = fontColorInput.value;
+    }
+}
+
+function initFileReader() {
     var fileReader = document.createElement("input");
     fileReader.setAttribute("type", "file");
     main.appendChild(fileReader);
@@ -372,26 +431,26 @@ function createStudentJsonFile() {
 }
 
 // Creates a form for entering student information
-function initForm(){
+function initForm() {
     const studentForm = document.createElement("form");
     main.appendChild(studentForm);
-    
-    const studentInfoArray = ['label',["Student Name: ", "Student Age: ","Hobbies: ","Email: ","Major: "]]
+
+    const studentInfoArray = ['label', ["Student Name: ", "Student Age: ", "Hobbies: ", "Email: ", "Major: "]]
     let l = studentInfoArray[1].length;
     console.log(l);
-    for (let i=0; i<l; i++){
+    for (let i = 0; i < l; i++) {
         const par = document.createElement('p');
         studentForm.appendChild(par);
-        const label = createElemWithText('label',studentInfoArray[1][i]);
+        const label = createElemWithText('label', studentInfoArray[1][i]);
         const input = document.createElement('input');
         label.setAttribute
         par.appendChild(label);
         par.appendChild(input);
     }
-    
+
     const button = document.createElement('button');
-    button.setAttribute("type","submit");
-    button.setAttribute('style',"height:20px; width:60px")
+    button.setAttribute("type", "submit");
+    button.setAttribute('style', "height:20px; width:60px")
     const text = document.createTextNode("submit");
     button.appendChild(text);
     studentForm.appendChild(button);
