@@ -226,6 +226,7 @@ class Course {
     }
 }
 
+// Main page components.
 var body = document.getElementsByTagName("body")[0];
 var header;
 var main;
@@ -234,12 +235,14 @@ var footer;
 // Contains all student information.
 var student;
 
+// Element to select a element to edit the style of.
 var elemPicker;
 
+// Element values that can be edited.
 var fontSizeInput;
 var fontColorInput;
 
-document.onload = init()
+document.onload = init();
 
 function init() {
     // Header
@@ -254,13 +257,13 @@ function init() {
 
 function initHeader() {
     header = document.createElement("header");
+    header.className = "header";
     body.appendChild(header);
 
     const headerTitle = createElemWithText("h1", "Student profile editor");
-    headerTitle.setAttribute("class", "header__title");
+    headerTitle.className = "header__title";
     header.appendChild(headerTitle);
 
-    //TODO: element picker
     const nav = document.createElement("nav");
     header.appendChild(nav);
     const list = document.createElement("ul");
@@ -284,6 +287,7 @@ function initHeader() {
 
 function initMain() {
     main = document.createElement("main");
+    main.className = "main-content";
     body.appendChild(main);
 
     initFileReader();
@@ -343,34 +347,34 @@ function initElementEditor() {
 }
 
 // Loads the current values for the selected element in the element picker.
-function loadTagValues(){
+function loadTagValues() {
     let elems = document.getElementsByTagName(elemPicker.value);
 
     // If at least one of this type of element exists load its values.
-    if (elems.length > 0){
+    if (elems.length > 0) {
         fontSizeInput.value = elems.item(0).style.fontSize;
         fontColorInput.value = elems.item(0).style.color;
     }
     // Otherwise default to nothing.
-    else{
+    else {
         fontSizeInput.value = "";
-        fontColorInput.value = ""
+        fontColorInput.value = "";
     }
 
 }
 
-function setTagFontSize(){
+function setTagFontSize() {
     let elems = document.getElementsByTagName(elemPicker.value);
 
-    for (i = 0; i < elems.length; i++){
+    for (i = 0; i < elems.length; i++) {
         elems.item(i).style.fontSize = fontSizeInput.value;
     }
 }
 
-function setTagColor(){
+function setTagColor() {
     let elems = document.getElementsByTagName(elemPicker.value);
 
-    for (i = 0; i < elems.length; i++){
+    for (i = 0; i < elems.length; i++) {
         elems.item(i).style.color = fontColorInput.value;
     }
 }
@@ -397,6 +401,7 @@ function handleFileSelection(e) {
 // Displays student information in the body
 function showStudent() {
     let nameElem = createElemWithText("h1", student.firstName + " " + student.lastName);
+    nameElem.className = "section__title"
 
     let studentInfo = document.createElement("ul");
 
@@ -410,8 +415,16 @@ function showStudent() {
     studentInfo.appendChild(email);
     studentInfo.appendChild(major);
 
+    let photo = document.createElement("img");
+    photo.src = student.photo
+    photo.alt = "A photo of the student."
+    photo.className = "section__img";
+
+
+
     main.appendChild(nameElem);
     main.appendChild(studentInfo);
+    main.appendChild(photo);
 
     //TODO: image, courses
 }
@@ -426,7 +439,7 @@ function createElemWithText(tagName, content) {
     return elem;
 }
 
-function appendBreak(node){
+function appendBreak(node) {
     const br = document.createElement("br");
     node.appendChild(br);
 }
@@ -452,11 +465,9 @@ function createStudentJsonFile() {
     student.major = "Computer science"
     student.courses = [course]
 
-    //let json = JSON.stringify(student);
     let json = student.stringify();
     const fs = require('node:fs');
     fs.writeFileSync("student1.json", json)
-
 }
 
 // Creates a form for entering student information
