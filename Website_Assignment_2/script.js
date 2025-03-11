@@ -299,9 +299,10 @@ function initFooter() {
     initElementEditor();
 }
 
+// Appends a select element to the footer that allowst selecting elements.
 function initElementPicker() {
     elemPicker = document.createElement("select");
-    //elemPicker.onchange = () => { elemPickerValue = elemPicker.value }
+    elemPicker.onchange = () => { loadTagValues(); }
 
     const bodyOption = createElemWithText("option", "Body");
     bodyOption.value = "body";
@@ -318,6 +319,7 @@ function initElementPicker() {
     footer.appendChild(elemPicker);
 }
 
+// Appends a form to the footer that allows editing the selected element.
 function initElementEditor() {
     const elemEditor = document.createElement("form");
 
@@ -338,6 +340,23 @@ function initElementEditor() {
     appendBreak(elemEditor);
 
     footer.appendChild(elemEditor);
+}
+
+// Loads the current values for the selected element in the element picker.
+function loadTagValues(){
+    let elems = document.getElementsByTagName(elemPicker.value);
+
+    // If at least one of this type of element exists load its values.
+    if (elems.length > 0){
+        fontSizeInput.value = elems.item(0).style.fontSize;
+        fontColorInput.value = elems.item(0).style.color;
+    }
+    // Otherwise default to nothing.
+    else{
+        fontSizeInput.value = "";
+        fontColorInput.value = ""
+    }
+
 }
 
 function setTagFontSize(){
