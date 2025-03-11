@@ -292,6 +292,7 @@ function initMain() {
 
 function initFooter() {
     footer = document.createElement("footer");
+    footer.className = "footer";
     body.appendChild(footer);
 
     initElementPicker();
@@ -326,11 +327,15 @@ function initElementEditor() {
     elemEditor.appendChild(fontSizeLabel);
     elemEditor.appendChild(fontSizeInput);
 
+    appendBreak(elemEditor);
+
     const fontColorLabel = createElemWithText("label", "Font color:");
     fontColorInput = document.createElement("input")
     fontColorInput.onchange = setTagColor;
     elemEditor.appendChild(fontColorLabel);
     elemEditor.appendChild(fontColorInput);
+
+    appendBreak(elemEditor);
 
     footer.appendChild(elemEditor);
 }
@@ -400,6 +405,11 @@ function createElemWithText(tagName, content) {
     elem.appendChild(text);
 
     return elem;
+}
+
+function appendBreak(node){
+    const br = document.createElement("br");
+    node.appendChild(br);
 }
 
 // Used to create the first json file in correct format.
