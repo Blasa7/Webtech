@@ -44,8 +44,8 @@ header {
    }
 
 .nav {
-     background-color: #8a8a91;
-     height: 40px;
+     border-top-style: solid;
+     border-color: rgba(247, 247, 247, 0.192);
    }
 .nav__list {
      list-style: none;

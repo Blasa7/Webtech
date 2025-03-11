@@ -256,11 +256,11 @@ function initHeader(){
     header.appendChild(headerTitle);
 
     //TODO: element picker
-    let nav = document.createElement("nav");
-    body.appendChild(nav);
-    let list = document.createElement("ul");
+    const nav = document.createElement("nav");
+    header.appendChild(nav);
+    const list = document.createElement("ul");
     nav.appendChild(list);
-    nav.setAttribute("class","nav");
+    nav.setAttribute("class","header nav");
     list.setAttribute("class","nav__list");
 
     const navBarClasses = ["nav__item","nav__link"]; 
@@ -269,7 +269,6 @@ function initHeader(){
     for (let i=0; i<l; i++){
         const listNode = document.createElement("li");
         const link = createElemWithText("a",navBar[i][1]);
-        console.log(link.firstChild.nodeValue);
         listNode.setAttribute("class",navBarClasses[0]);
         link.setAttribute("class",navBarClasses[1]);
         link.setAttribute("href",navBar[i][0]); 
@@ -283,6 +282,7 @@ function initMain(){
     body.appendChild(main);
 
     initFileReader();
+    initForm(); 
 }
 
 function initFooter(){
@@ -369,6 +369,32 @@ function createStudentJsonFile() {
     const fs = require('node:fs');
     fs.writeFileSync("student1.json", json)
 
+}
+
+// Creates a form for entering student information
+function initForm(){
+    const studentForm = document.createElement("form");
+    main.appendChild(studentForm);
+    
+    const studentInfoArray = ['label',["Student Name: ", "Student Age: ","Hobbies: ","Email: ","Major: "]]
+    let l = studentInfoArray[1].length;
+    console.log(l);
+    for (let i=0; i<l; i++){
+        const par = document.createElement('p');
+        studentForm.appendChild(par);
+        const label = createElemWithText('label',studentInfoArray[1][i]);
+        const input = document.createElement('input');
+        label.setAttribute
+        par.appendChild(label);
+        par.appendChild(input);
+    }
+    
+    const button = document.createElement('button');
+    button.setAttribute("type","submit");
+    button.setAttribute('style',"height:20px; width:60px")
+    const text = document.createTextNode("submit");
+    button.appendChild(text);
+    studentForm.appendChild(button);
 }
 
 
