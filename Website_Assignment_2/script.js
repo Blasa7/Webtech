@@ -284,6 +284,13 @@ function initHeader() {
         listNode.appendChild(link);
         list.appendChild(listNode);
     }
+    const styleButtons = document.createElement('p');
+    const button1 = document.createElement('button');
+    styleButtons.appendChild(button1);
+    header.appendChild(styleButtons);
+    styleButtons.className = "style__menu";
+
+    //button1.onclick;
 }
 
 function initMain() {
@@ -292,7 +299,7 @@ function initMain() {
     body.appendChild(main);
 
     initFileReader();
-    initForm();
+    //initForm();
 }
 
 function initFooter() {
@@ -309,6 +316,7 @@ function initFooter() {
 function initElementPicker() {
     elemPicker = document.createElement("select");
     elemPicker.onchange = () => { loadTagValues(); }
+    elemPicker.className = "footer__menu";
 
     const bodyOption = createElemWithText("option", "Body");
     bodyOption.value = "body";
@@ -396,7 +404,6 @@ function loadTagValues() {
         fontSizeInput.value = "";
         fontColorInput.value = "";
     }
-
 }
 
 function setTagFontSize() {
@@ -465,13 +472,24 @@ function showStudent() {
     photo.alt = "A photo of the student."
     photo.className = "section__img";
 
-
-
     main.appendChild(nameElem);
     main.appendChild(studentInfo);
     main.appendChild(photo);
 
     //TODO: image, courses
+    let course = student.courses;
+    let courseTeacher = student.courses.teacher;
+    let courseName = createElemWithText("h1", course.title);
+    courseName.className = "section__title";
+
+    let courseInfo = document.createElement('ul');
+    let coTeacher = createElemWithText('li', "Teacher:" + courseTeacher.firstName + " " + courseTeacher.lastName);
+    let courseDescription = createElemWithText('li', "Description: " + course.description);
+    courseInfo.appendChild(coTeacher);
+    courseInfo.appendChild(courseDescription);
+
+    main.appendChild(courseName);
+    main.appendChild(courseInfo);
 }
 
 // Creates a element with the given tag and text contents
@@ -516,30 +534,30 @@ function createStudentJsonFile() {
 }
 
 // Creates a form for entering student information
-function initForm() {
-    const studentForm = document.createElement("form");
-    main.appendChild(studentForm);
+// function initForm() {
+//     const studentForm = document.createElement("form");
+//     main.appendChild(studentForm);
 
-    const studentInfoArray = ['label', ["Student Name: ", "Student Age: ", "Hobbies: ", "Email: ", "Major: "]]
-    let l = studentInfoArray[1].length;
-    console.log(l);
-    for (let i = 0; i < l; i++) {
-        const par = document.createElement('p');
-        studentForm.appendChild(par);
-        const label = createElemWithText('label', studentInfoArray[1][i]);
-        const input = document.createElement('input');
-        label.setAttribute
-        par.appendChild(label);
-        par.appendChild(input);
-    }
+//     const studentInfoArray = ['label', ["Student Name: ", "Student Age: ", "Hobbies: ", "Email: ", "Major: "]]
+//     let l = studentInfoArray[1].length;
+//     console.log(l);
+//     for (let i = 0; i < l; i++) {
+//         const par = document.createElement('p');
+//         studentForm.appendChild(par);
+//         const label = createElemWithText('label', studentInfoArray[1][i]);
+//         const input = document.createElement('input');
+//         label.setAttribute
+//         par.appendChild(label);
+//         par.appendChild(input);
+//     }
 
-    const button = document.createElement('button');
-    button.setAttribute("type", "submit");
-    button.setAttribute('style', "height:20px; width:60px")
-    const text = document.createTextNode("submit");
-    button.appendChild(text);
-    studentForm.appendChild(button);
-}
+//     const button = document.createElement('button');
+//     button.setAttribute("type", "submit");
+//     button.setAttribute('style', "height:20px; width:60px")
+//     const text = document.createTextNode("submit");
+//     button.appendChild(text);
+//     studentForm.appendChild(button);
+// }
 
 
 

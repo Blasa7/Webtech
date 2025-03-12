@@ -21,6 +21,11 @@ body {
      flex-direction: column;
      line-height: 1.6;
    }
+
+button {
+     height: 20px;
+     width: 40px;
+   }
    
 .header {
      background-image: url("images/header_background.jpg");
@@ -85,6 +90,15 @@ displays navigation links larger on mobile browsers
    /*  
    gebruikt 90 % en 1000px max voor responsive design
    */
+
+.style__menu {
+     background-color: black;
+     height: 30px;
+     padding: 0;
+     margin: 0;
+}
+
+
 .main-content {
      flex: 1;
      margin: 20px auto;
@@ -201,6 +215,11 @@ displays navigation links larger on mobile browsers
      width: auto;  
      height: 50%; 
  }
+
+ .footer__menu {
+     position: left;
+ }
+
 
     /* W3School and the lecture slides mainly have been used for CSS reference 
     and other websites such as: 
