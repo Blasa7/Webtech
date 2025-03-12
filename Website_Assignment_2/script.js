@@ -241,6 +241,7 @@ var elemPicker;
 // Element values that can be edited.
 var fontSizeInput;
 var fontColorInput;
+var fontFamilyPicker;
 
 document.onload = init();
 
@@ -301,6 +302,7 @@ function initFooter() {
 
     initElementPicker();
     initElementEditor();
+    initFontFamilyPicker();
 }
 
 // Appends a select element to the footer that allowst selecting elements.
@@ -346,6 +348,39 @@ function initElementEditor() {
     footer.appendChild(elemEditor);
 }
 
+// Appends a select element to the footer that allows setting the font family.
+function initFontFamilyPicker() {
+    fontFamilyPicker = document.createElement('select');
+    fontFamilyPicker.onchange = setFontFamily;
+    fontFamilyPicker.setAttribute("id","font-select");
+    const label = createElemWithText('label', "Font family:");
+    label.setAttribute("for","font-select");
+
+    const fontOption1 = createElemWithText("option", "Arial");
+    fontOption1.value = "arial";
+    fontFamilyPicker.appendChild(fontOption1);
+
+    const fontOption2 = createElemWithText("option", "Serif");
+    fontOption2.value = "serif";
+    fontFamilyPicker.appendChild(fontOption2);
+
+    const fontOption3 = createElemWithText("option", "Cursive");
+    fontOption3.value = "cursive";
+    fontFamilyPicker.appendChild(fontOption3);
+
+    const fontOption4 = createElemWithText("option", "Arial");
+    fontOption4.value = "arial";
+    fontFamilyPicker.appendChild(fontOption4);
+
+    const fontOption5 = createElemWithText("option", "Emoji");
+    fontOption5.value = "emoji";
+    fontFamilyPicker.appendChild(fontOption5);
+
+    footer.appendChild(label);
+    footer.appendChild(fontFamilyPicker);
+}
+
+
 // Loads the current values for the selected element in the element picker.
 function loadTagValues() {
     let elems = document.getElementsByTagName(elemPicker.value);
@@ -354,6 +389,7 @@ function loadTagValues() {
     if (elems.length > 0) {
         fontSizeInput.value = elems.item(0).style.fontSize;
         fontColorInput.value = elems.item(0).style.color;
+        fontFamilyPicker.value = elems.item(0).style.fontFamily; 
     }
     // Otherwise default to nothing.
     else {
@@ -378,6 +414,15 @@ function setTagColor() {
         elems.item(i).style.color = fontColorInput.value;
     }
 }
+
+function setFontFamily() {
+    let elems = document.getElementsByTagName(elemPicker.value);
+
+    for (i = 0; i < elems.length; i++) {
+        elems.item(i).style.fontFamily = fontFamilyPicker.value;
+    }
+}
+
 
 function initFileReader() {
     var fileReader = document.createElement("input");
