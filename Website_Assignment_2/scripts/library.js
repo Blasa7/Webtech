@@ -281,7 +281,7 @@ class Page {
 
         const navBarClasses = ["nav__item", "nav__link"];
         let navBar = [["index.html", "Main"], ["students.html", "Students"], ["courses.html", "Courses"]];
-        navBar = navBar.filter((nav) => nav[0] != this.href);
+        //navBar = navBar.filter((nav) => nav[0] != this.href);
 
         let l = navBar.length;
         for (let i = 0; i < l; i++) {
