@@ -1,6 +1,10 @@
 import * as li from './library.js';
 
 class StudentPage extends li.Page {
+    constructor(){
+        super("students.html");
+    }
+
     init() {
         super.init;
     }
@@ -9,7 +13,7 @@ class StudentPage extends li.Page {
 document.onload = init();
 
 function init() {
-    let studentPage = new StudentPageePage();
+    let studentPage = new StudentPage();
     studentPage.init();
 }
 
