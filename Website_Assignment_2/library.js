@@ -226,6 +226,244 @@ class Course {
     }
 }
 
+class Page {
+    // Main page components.
+    body = document.getElementsByTagName("body")[0];
+    header;
+    main;
+    footer;
+
+    // Element to select a element to edit the style of.
+    elemPicker;
+
+    // Element values that can be edited.
+    fontSizeInput;
+    fontColorInput;
+    fontFamilyPicker;
+
+    init() {
+        // Header
+        this.initHeader();
+    
+        // Main
+        this.initMain();
+    
+        // Footer
+        this.initFooter();
+    }
+    
+    initHeader() {
+        this.header = document.createElement("header");
+        this.header.className = "header";
+        this.body.appendChild(this.header);
+    
+        const headerTitle = createElemWithText("h1", "Student profile editor");
+        headerTitle.className = "header__title";
+        this.header.appendChild(headerTitle);
+    
+        const nav = document.createElement("nav");
+        this.header.appendChild(nav);
+        const list = document.createElement("ul");
+        nav.appendChild(list);
+        nav.setAttribute("class", "header nav");
+        list.setAttribute("class", "nav__list");
+    
+        const navBarClasses = ["nav__item", "nav__link"];
+        const navBar = [["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html","Courses"]];
+        let l = navBar.length;
+        for (let i = 0; i < l; i++) {
+            const listNode = document.createElement("li");
+            const link = createElemWithText("a", navBar[i][1]);
+            listNode.setAttribute("class", navBarClasses[0]);
+            link.setAttribute("class", navBarClasses[1]);
+            link.setAttribute("href", navBar[i][0]);
+            listNode.appendChild(link);
+            list.appendChild(listNode);
+        }
+        const styleButtons = document.createElement('p');
+        const button1 = document.createElement('button');
+        styleButtons.appendChild(button1);
+        this.header.appendChild(styleButtons);
+        styleButtons.className = "style__menu";
+    
+        //button1.onclick;
+    }
+    
+    initMain() {
+        this.main = document.createElement("main");
+        this.main.className = "main-content";
+        this.body.appendChild(this.main);
+    
+        this.initFileReader();
+        //initForm();
+    }
+    
+    initFooter() {
+        this.footer = document.createElement("footer");
+        this.footer.className = "footer";
+        this.body.appendChild(this.footer);
+    
+        this.initElementPicker();
+        this.initElementEditor();
+        this.initFontFamilyPicker();
+    }
+    
+    // Appends a select element to the footer that allowst selecting elements.
+    initElementPicker() {
+        this.elemPicker = document.createElement("select");
+        this.elemPicker.onchange = () => { loadTagValues(); }
+        this.elemPicker.className = "footer__menu";
+    
+        const bodyOption = createElemWithText("option", "Body");
+        bodyOption.value = "body";
+        this.elemPicker.appendChild(bodyOption);
+    
+        const articleOption = createElemWithText("option", "Article");
+        articleOption.value = "article";
+        this.elemPicker.appendChild(articleOption);
+    
+        const sectionOption = createElemWithText("option", "Section");
+        sectionOption.value = "section";
+        this.elemPicker.appendChild(sectionOption);
+    
+        this.footer.appendChild(this.elemPicker);
+    }
+    
+    // Appends a form to the footer that allows editing the selected element.
+    initElementEditor() {
+        const elemEditor = document.createElement("form");
+    
+        const fontSizeLabel = createElemWithText("label", "Font size:");
+        this.fontSizeInput = document.createElement("input");
+        this.fontSizeInput.onchange = this.setTagFontSize;
+        elemEditor.appendChild(fontSizeLabel);
+        elemEditor.appendChild(this.fontSizeInput);
+    
+        appendBreak(elemEditor);
+    
+        const fontColorLabel = createElemWithText("label", "Font color:");
+        this.fontColorInput = document.createElement("input")
+        this.fontColorInput.onchange = this.setTagColor;
+        elemEditor.appendChild(fontColorLabel);
+        elemEditor.appendChild(this.fontColorInput);
+    
+        appendBreak(elemEditor);
+    
+        this.footer.appendChild(elemEditor);
+    }
+    
+    // Appends a select element to the footer that allows setting the font family.
+    initFontFamilyPicker() {
+        this.fontFamilyPicker = document.createElement('select');
+        this.fontFamilyPicker.onchange = this.setFontFamily;
+        this.fontFamilyPicker.setAttribute("id","font-select");
+        const label = createElemWithText('label', "Font family:");
+        label.setAttribute("for","font-select");
+    
+        const fontOption1 = createElemWithText("option", "Arial");
+        fontOption1.value = "arial";
+        this.fontFamilyPicker.appendChild(fontOption1);
+    
+        const fontOption2 = createElemWithText("option", "Serif");
+        fontOption2.value = "serif";
+        this.fontFamilyPicker.appendChild(fontOption2);
+    
+        const fontOption3 = createElemWithText("option", "Cursive");
+        fontOption3.value = "cursive";
+        this.fontFamilyPicker.appendChild(fontOption3);
+    
+        const fontOption4 = createElemWithText("option", "Arial");
+        fontOption4.value = "arial";
+        this.fontFamilyPicker.appendChild(fontOption4);
+    
+        const fontOption5 = createElemWithText("option", "Emoji");
+        fontOption5.value = "emoji";
+        this.fontFamilyPicker.appendChild(fontOption5);
+    
+        this.footer.appendChild(label);
+        this.footer.appendChild(this.fontFamilyPicker);
+    }
+    
+    
+    // Loads the current values for the selected element in the element picker.
+    loadTagValues() {
+        let elems = document.getElementsByTagName(elemPicker.value);
+    
+        // If at least one of this type of element exists load its values.
+        if (elems.length > 0) {
+            this.fontSizeInput.value = elems.item(0).style.fontSize;
+            this.fontColorInput.value = elems.item(0).style.color;
+            this.fontFamilyPicker.value = elems.item(0).style.fontFamily; 
+        }
+        // Otherwise default to nothing.
+        else {
+            this.fontSizeInput.value = "";
+            this.fontColorInput.value = "";
+        }
+    }
+    
+    setTagFontSize() {
+        let elems = document.getElementsByTagName(elemPicker.value);
+    
+        for (i = 0; i < elems.length; i++) {
+            elems.item(i).style.fontSize = fontSizeInput.value;
+        }
+    }
+    
+    setTagColor() {
+        let elems = document.getElementsByTagName(elemPicker.value);
+    
+        for (i = 0; i < elems.length; i++) {
+            elems.item(i).style.color = fontColorInput.value;
+        }
+    }
+    
+    setFontFamily() {
+        let elems = document.getElementsByTagName(elemPicker.value);
+    
+        for (i = 0; i < elems.length; i++) {
+            elems.item(i).style.fontFamily = fontFamilyPicker.value;
+        }
+    }
+    
+    
+    initFileReader() {
+        var fileReader = document.createElement("input");
+        fileReader.setAttribute("type", "file");
+        this.main.appendChild(fileReader);
+        fileReader.addEventListener("change", this.handleFileSelection);
+    }
+    
+    handleFileSelection(e) {
+        const file = e.target.files[0];
+    
+        const reader = new FileReader();
+        reader.onload = () => {
+            this.student = Student.parse(reader.result);
+            showStudent();
+        }
+    
+        reader.readAsText(file)
+    }
+}
+
+// Creates a element with the given tag and text contents
+function createElemWithText(tagName, content) {
+    let elem = document.createElement(tagName);
+    let text = document.createTextNode(content);
+
+    elem.appendChild(text);
+
+    return elem;
+}
+
+function appendBreak(node) {
+    const br = document.createElement("br");
+    node.appendChild(br);
+}
+
+export {Page}
+/*
 // Main page components.
 //var body = document.getElementsByTagName("body")[0];
 //var header;
@@ -245,219 +483,7 @@ var fontFamilyPicker;
 
 //document.onload = init(body);
 
-// function init(body) {
-//     // Header
-//     initHeader(headerString, body);
 
-//     // Main
-//     initMain();
-
-//     // Footer
-//     initFooter();
-// }
-
-
-
-function initHeader(headerstring,body, navBar) {
-    const header = document.createElement("header");
-    header.className = "header";
-    body.appendChild(header);
-
-    const headerTitle = createElemWithText("h1", headerstring);
-    headerTitle.className = "header__title";
-    header.appendChild(headerTitle);
-
-    const nav = document.createElement("nav");
-    header.appendChild(nav);
-    const list = document.createElement("ul");
-    nav.appendChild(list);
-    nav.setAttribute("class", "header nav");
-    list.setAttribute("class", "nav__list");
-
-    const navBarClasses = ["nav__item", "nav__link"];
-    //navBar = [["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html","Courses"]];
-    let l = navBar.length;
-    for (let i = 0; i < l; i++) {
-        const listNode = document.createElement("li");
-        const link = createElemWithText("a", navBar[i][1]);
-        listNode.setAttribute("class", navBarClasses[0]);
-        link.setAttribute("class", navBarClasses[1]);
-        link.setAttribute("href", navBar[i][0]);
-        listNode.appendChild(link);
-        list.appendChild(listNode);
-    }
-    const styleButtons = document.createElement('p');
-    const button1 = document.createElement('button');
-    styleButtons.appendChild(button1);
-    header.appendChild(styleButtons);
-    styleButtons.className = "style__menu";
-    //button1.onclick;
-}
-function createElemWithText(tagName, content) {
-    let elem = document.createElement(tagName);
-    let text = document.createTextNode(content);
-
-    elem.appendChild(text);
-
-    return elem;
-}
-export {initHeader,createElemWithText}; 
-
-function initMain(body) {
-    const main = document.createElement("main");
-    main.className = "main-content";
-    body.appendChild(main);
-
-    initFileReader(main);
-    //initForm();
-}
-function initFileReader(main) {
-    var fileReader = document.createElement("input");
-    fileReader.setAttribute("type", "file");
-    main.appendChild(fileReader);
-    fileReader.addEventListener("change", handleFileSelection);
-}
-function handleFileSelection(e) {
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.onload = () => {
-        student = Student.parse(reader.result);
-        showStudent();
-    }
-
-    reader.readAsText(file)
-}
-export {initMain, initFileReader, handleFileSelection};
-
-
-function initFooter() {
-    footer = document.createElement("footer");
-    footer.className = "footer";
-    body.appendChild(footer);
-
-    initElementPicker();
-    initElementEditor();
-    initFontFamilyPicker();
-}
-
-// Appends a select element to the footer that allowst selecting elements.
-function initElementPicker() {
-    elemPicker = document.createElement("select");
-    elemPicker.onchange = () => { loadTagValues(); }
-    elemPicker.className = "footer__menu";
-
-    const bodyOption = createElemWithText("option", "Body");
-    bodyOption.value = "body";
-    elemPicker.appendChild(bodyOption);
-
-    const articleOption = createElemWithText("option", "Article");
-    articleOption.value = "article";
-    elemPicker.appendChild(articleOption);
-
-    const sectionOption = createElemWithText("option", "Section");
-    sectionOption.value = "section";
-    elemPicker.appendChild(sectionOption);
-
-    footer.appendChild(elemPicker);
-}
-
-// Appends a form to the footer that allows editing the selected element.
-function initElementEditor() {
-    const elemEditor = document.createElement("form");
-
-    const fontSizeLabel = createElemWithText("label", "Font size:");
-    fontSizeInput = document.createElement("input");
-    fontSizeInput.onchange = setTagFontSize;
-    elemEditor.appendChild(fontSizeLabel);
-    elemEditor.appendChild(fontSizeInput);
-
-    appendBreak(elemEditor);
-
-    const fontColorLabel = createElemWithText("label", "Font color:");
-    fontColorInput = document.createElement("input")
-    fontColorInput.onchange = setTagColor;
-    elemEditor.appendChild(fontColorLabel);
-    elemEditor.appendChild(fontColorInput);
-
-    appendBreak(elemEditor);
-
-    footer.appendChild(elemEditor);
-}
-
-// Appends a select element to the footer that allows setting the font family.
-function initFontFamilyPicker() {
-    fontFamilyPicker = document.createElement('select');
-    fontFamilyPicker.onchange = setFontFamily;
-    fontFamilyPicker.setAttribute("id","font-select");
-    const label = createElemWithText('label', "Font family:");
-    label.setAttribute("for","font-select");
-
-    const fontOption1 = createElemWithText("option", "Arial");
-    fontOption1.value = "arial";
-    fontFamilyPicker.appendChild(fontOption1);
-
-    const fontOption2 = createElemWithText("option", "Serif");
-    fontOption2.value = "serif";
-    fontFamilyPicker.appendChild(fontOption2);
-
-    const fontOption3 = createElemWithText("option", "Cursive");
-    fontOption3.value = "cursive";
-    fontFamilyPicker.appendChild(fontOption3);
-
-    const fontOption4 = createElemWithText("option", "Arial");
-    fontOption4.value = "arial";
-    fontFamilyPicker.appendChild(fontOption4);
-
-    const fontOption5 = createElemWithText("option", "Emoji");
-    fontOption5.value = "emoji";
-    fontFamilyPicker.appendChild(fontOption5);
-
-    footer.appendChild(label);
-    footer.appendChild(fontFamilyPicker);
-}
-
-
-// Loads the current values for the selected element in the element picker.
-function loadTagValues() {
-    let elems = document.getElementsByTagName(elemPicker.value);
-
-    // If at least one of this type of element exists load its values.
-    if (elems.length > 0) {
-        fontSizeInput.value = elems.item(0).style.fontSize;
-        fontColorInput.value = elems.item(0).style.color;
-        fontFamilyPicker.value = elems.item(0).style.fontFamily; 
-    }
-    // Otherwise default to nothing.
-    else {
-        fontSizeInput.value = "";
-        fontColorInput.value = "";
-    }
-}
-
-function setTagFontSize() {
-    let elems = document.getElementsByTagName(elemPicker.value);
-
-    for (i = 0; i < elems.length; i++) {
-        elems.item(i).style.fontSize = fontSizeInput.value;
-    }
-}
-
-function setTagColor() {
-    let elems = document.getElementsByTagName(elemPicker.value);
-
-    for (i = 0; i < elems.length; i++) {
-        elems.item(i).style.color = fontColorInput.value;
-    }
-}
-
-function setFontFamily() {
-    let elems = document.getElementsByTagName(elemPicker.value);
-
-    for (i = 0; i < elems.length; i++) {
-        elems.item(i).style.fontFamily = fontFamilyPicker.value;
-    }
-}
 
 
 
@@ -575,3 +601,4 @@ function createStudentJsonFile() {
 
 
 
+*/
