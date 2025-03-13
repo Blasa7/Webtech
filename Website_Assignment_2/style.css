@@ -135,6 +135,18 @@ displays navigation links larger on mobile browsers
      right:5em;
      top: 5em;
 }
+
+.course-title{
+
+}
+
+.course-info{
+     display: none;
+}
+
+.course-title:hover + .course-info{
+     display: block;
+}
    
 .text {
      font-size: 1.1rem;

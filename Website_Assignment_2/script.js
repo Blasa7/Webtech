@@ -1,5 +1,4 @@
 // TODO: Style sheet should all be in js code, header, footer, image and course hover.
-
 class Person {
     #firstName;
     #lastName;
@@ -478,24 +477,47 @@ function showStudent() {
 
     //TODO: image, courses
 
-    /*let courseList = student.courses.forEach(element => {
-        
+    let courseSectionTitle = createElemWithText("h2", "Student Courses");
+    main.appendChild(courseSectionTitle);
+
+    let courseList = document.createElement("ul");
+    main.appendChild(courseList);
+
+    student.courses.forEach(course => {
+        let courseListItem = createElemWithText("li", course.title);
+        courseListItem.className = "course-title";
+        courseList.appendChild(courseListItem);
+
+        let courseInfo = document.createElement("ul");
+        courseInfo.className = "course-info";
+        courseList.appendChild(courseInfo);
+
+        let teacher = createElemWithText("li", "Course teacher: " + course.teacher.firstName + " " + course.teacher.lastName);
+        courseInfo.appendChild(teacher);
+
+        let description = createElemWithText("li", "Course description " + course.description);
+        courseInfo.appendChild(description);
     });
+
+    for (i = 0; i < student.courses.length; i++){
+
+    }
+
     let courses = createElemWithText("li", "Student courses: " + student.courses)
-*/
-    let course = student.courses[0];
-    let courseTeacher = course.teacher;
-    let courseName = createElemWithText("h1", course.title);
-    courseName.className = "section__title";
 
-    let courseInfo = document.createElement('ul');
-    let coTeacher = createElemWithText('li', "Teacher:" + courseTeacher.firstName + " " + courseTeacher.lastName);
-    let courseDescription = createElemWithText('li', "Description: " + course.description);
-    courseInfo.appendChild(coTeacher);
-    courseInfo.appendChild(courseDescription);
+    // let course = student.courses[0];
+    // let courseTeacher = course.teacher;
+    // let courseName = createElemWithText("h1", course.title);
+    // courseName.className = "section__title";
 
-    main.appendChild(courseName);
-    main.appendChild(courseInfo);
+    // let courseInfo = document.createElement('ul');
+    // let coTeacher = createElemWithText('li', "Teacher:" + courseTeacher.firstName + " " + courseTeacher.lastName);
+    // let courseDescription = createElemWithText('li', "Description: " + course.description);
+    // courseInfo.appendChild(coTeacher);
+    // courseInfo.appendChild(courseDescription);
+
+    // main.appendChild(courseName);
+    // main.appendChild(courseInfo);
 }
 
 // Creates a element with the given tag and text contents
