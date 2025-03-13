@@ -160,7 +160,7 @@ class Student extends Person {
         student.email = obj.email;
         student.photo = obj.photo;
         student.major = obj.major;
-        student.courses = Course.parse(obj.courses[0]);
+        student.courses = obj.courses.map(Course.parse); 
 
         return student;
     }
@@ -477,8 +477,14 @@ function showStudent() {
     main.appendChild(photo);
 
     //TODO: image, courses
-    let course = student.courses;
-    let courseTeacher = student.courses.teacher;
+
+    /*let courseList = student.courses.forEach(element => {
+        
+    });
+    let courses = createElemWithText("li", "Student courses: " + student.courses)
+*/
+    let course = student.courses[0];
+    let courseTeacher = course.teacher;
     let courseName = createElemWithText("h1", course.title);
     courseName.className = "section__title";
 
