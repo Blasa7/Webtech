@@ -159,7 +159,7 @@ class Student extends Person {
         student.email = obj.email;
         student.photo = obj.photo;
         student.major = obj.major;
-        student.courses = obj.courses.map(Course.parse); 
+        student.courses = obj.courses.map(Course.parse);
 
         return student;
     }
@@ -272,7 +272,7 @@ function initHeader() {
     list.setAttribute("class", "nav__list");
 
     const navBarClasses = ["nav__item", "nav__link"];
-    const navBar = [["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html","Courses"]];
+    const navBar = [["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html", "Courses"]];
     let l = navBar.length;
     for (let i = 0; i < l; i++) {
         const listNode = document.createElement("li");
@@ -359,9 +359,9 @@ function initElementEditor() {
 function initFontFamilyPicker() {
     fontFamilyPicker = document.createElement('select');
     fontFamilyPicker.onchange = setFontFamily;
-    fontFamilyPicker.setAttribute("id","font-select");
+    fontFamilyPicker.setAttribute("id", "font-select");
     const label = createElemWithText('label', "Font family:");
-    label.setAttribute("for","font-select");
+    label.setAttribute("for", "font-select");
 
     const fontOption1 = createElemWithText("option", "Arial");
     fontOption1.value = "arial";
@@ -396,7 +396,7 @@ function loadTagValues() {
     if (elems.length > 0) {
         fontSizeInput.value = elems.item(0).style.fontSize;
         fontColorInput.value = elems.item(0).style.color;
-        fontFamilyPicker.value = elems.item(0).style.fontFamily; 
+        fontFamilyPicker.value = elems.item(0).style.fontFamily;
     }
     // Otherwise default to nothing.
     else {

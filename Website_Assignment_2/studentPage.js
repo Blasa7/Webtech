@@ -1,8 +1,7 @@
-
 import * as li from './library.js';
 
-class CoursePage extends li.Page {
-    init(){
+class StudentPage extends li.Page {
+    init() {
         super.init;
     }
 }
@@ -10,10 +9,7 @@ class CoursePage extends li.Page {
 document.onload = init();
 
 function init() {
-    let coursePage = new CoursePage();
-    coursePage.init();
-
-    //li.initHeader(headerString, body, navBar);
-    //li.initMain(body);
+    let studentPage = new StudentPageePage();
+    studentPage.init();
 }
 
