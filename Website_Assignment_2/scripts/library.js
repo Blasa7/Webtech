@@ -321,7 +321,7 @@ class Page {
     // Appends a select element to the footer that allowst selecting elements.
     initElementPicker() {
         this.elemPicker = document.createElement("select");
-        this.elemPicker.onchange = () => { loadTagValues(); }
+        this.elemPicker.onchange = () => { this.loadTagValues(); }
         this.elemPicker.className = "footer__menu";
 
         const bodyOption = createElemWithText("option", "Body");
@@ -345,15 +345,16 @@ class Page {
 
         const fontSizeLabel = createElemWithText("label", "Font size:");
         this.fontSizeInput = document.createElement("input");
-        this.fontSizeInput.onchange = this.setTagFontSize;
+        this.fontSizeInput.onchange = this.setTagFontSize.bind(this);
         elemEditor.appendChild(fontSizeLabel);
         elemEditor.appendChild(this.fontSizeInput);
 
         appendBreak(elemEditor);
 
         const fontColorLabel = createElemWithText("label", "Font color:");
-        this.fontColorInput = document.createElement("input")
-        this.fontColorInput.onchange = this.setTagColor;
+        this.fontColorInput = document.createElement("input");
+        this.fontColorInput.type = "color";
+        this.fontColorInput.onchange = this.setTagColor.bind(this);
         elemEditor.appendChild(fontColorLabel);
         elemEditor.appendChild(this.fontColorInput);
 
@@ -365,7 +366,7 @@ class Page {
     // Appends a select element to the footer that allows setting the font family.
     initFontFamilyPicker() {
         this.fontFamilyPicker = document.createElement('select');
-        this.fontFamilyPicker.onchange = this.setFontFamily;
+        this.fontFamilyPicker.onchange = this.setFontFamily.bind(this);
         this.fontFamilyPicker.setAttribute("id", "font-select");
         const label = createElemWithText('label', "Font family:");
         label.setAttribute("for", "font-select");
@@ -397,7 +398,7 @@ class Page {
 
     // Loads the current values for the selected element in the element picker.
     loadTagValues() {
-        let elems = document.getElementsByTagName(elemPicker.value);
+        let elems = document.getElementsByTagName(this.elemPicker.value);
 
         // If at least one of this type of element exists load its values.
         if (elems.length > 0) {
@@ -413,26 +414,26 @@ class Page {
     }
 
     setTagFontSize() {
-        let elems = document.getElementsByTagName(elemPicker.value);
+        let elems = document.getElementsByTagName(this.elemPicker.value);
 
-        for (i = 0; i < elems.length; i++) {
-            elems.item(i).style.fontSize = fontSizeInput.value;
+        for (let i = 0; i < elems.length; i++) {
+            elems.item(i).style.fontSize = this.fontSizeInput.value;
         }
     }
 
     setTagColor() {
-        let elems = document.getElementsByTagName(elemPicker.value);
+        let elems = document.getElementsByTagName(this.elemPicker.value);
 
-        for (i = 0; i < elems.length; i++) {
-            elems.item(i).style.color = fontColorInput.value;
+        for (let i = 0; i < elems.length; i++) {
+            elems.item(i).style.color = this.fontColorInput.value;
         }
     }
 
     setFontFamily() {
-        let elems = document.getElementsByTagName(elemPicker.value);
+        let elems = document.getElementsByTagName(this.elemPicker.value);
 
-        for (i = 0; i < elems.length; i++) {
-            elems.item(i).style.fontFamily = fontFamilyPicker.value;
+        for (let i = 0; i < elems.length; i++) {
+            elems.item(i).style.fontFamily = this.fontFamilyPicker.value;
         }
     }
 }
