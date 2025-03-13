@@ -243,8 +243,14 @@ class Page {
     fontColorInput;
     fontFamilyPicker;
 
-    constructor(href) {
+    // Page specific 
+    headerString;
+
+
+
+    constructor(href, headerString) {
         this.href = href;
+        this.headerString = headerString;
     }
 
     init() {
@@ -266,7 +272,7 @@ class Page {
         this.header.className = "header";
         this.body.appendChild(this.header);
 
-        const headerTitle = createElemWithText("h1", "Student profile editor");
+        const headerTitle = createElemWithText("h1", this.headerString);
         headerTitle.className = "header__title";
         this.header.appendChild(headerTitle);
     }

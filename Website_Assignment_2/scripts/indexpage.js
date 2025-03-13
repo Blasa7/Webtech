@@ -2,7 +2,7 @@ import * as li from './library.js';
 
 class IndexPage extends li.Page {
     constructor(){
-        super("index.html");
+        super("index.html", "Student profile editor");
     }
 
     init() {

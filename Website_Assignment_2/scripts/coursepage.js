@@ -4,7 +4,7 @@ class CoursePage extends li.Page {
     courses;
 
     constructor(){
-        super("courses.html");
+        super("courses.html", "Courses");
     }
 
     init() {
