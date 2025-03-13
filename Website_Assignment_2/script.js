@@ -273,7 +273,7 @@ function initHeader() {
     list.setAttribute("class", "nav__list");
 
     const navBarClasses = ["nav__item", "nav__link"];
-    const navBar = [["about.html", "About us"], ["contact.html", "Contact us"]];
+    const navBar = [["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html","Courses"]];
     let l = navBar.length;
     for (let i = 0; i < l; i++) {
         const listNode = document.createElement("li");
