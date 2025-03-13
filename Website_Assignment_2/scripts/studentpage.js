@@ -58,8 +58,6 @@ class StudentPage extends li.Page {
         this.main.appendChild(studentInfo);
         this.main.appendChild(photo);
 
-        //TODO: image, courses
-
         let courseSectionTitle = li.createElemWithText("h2", "Student Courses");
         this.main.appendChild(courseSectionTitle);
 
