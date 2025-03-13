@@ -160,7 +160,7 @@ class Student extends Person {
         student.email = obj.email;
         student.photo = obj.photo;
         student.major = obj.major;
-        student.courses = Course.parse(obj.courses[0]);
+        student.courses = obj.courses.map(Course.parse);
 
         return student;
     }
@@ -280,7 +280,7 @@ class Page {
         list.setAttribute("class", "nav__list");
 
         const navBarClasses = ["nav__item", "nav__link"];
-        let navBar = [["index.html", "Main"], ["about.html", "About us"], ["contact.html", "Contact us"], ["courses.html", "Courses"]];
+        let navBar = [["index.html", "Main"], ["students.html", "Students"], ["courses.html", "Courses"]];
         navBar = navBar.filter((nav) => nav[0] != this.href);
 
         let l = navBar.length;
@@ -306,9 +306,6 @@ class Page {
         this.main = document.createElement("main");
         this.main.className = "main-content";
         this.body.appendChild(this.main);
-
-        this.initFileReader();
-        //initForm();
     }
 
     initFooter() {
@@ -438,26 +435,6 @@ class Page {
             elems.item(i).style.fontFamily = fontFamilyPicker.value;
         }
     }
-
-
-    initFileReader() {
-        var fileReader = document.createElement("input");
-        fileReader.setAttribute("type", "file");
-        this.main.appendChild(fileReader);
-        fileReader.addEventListener("change", this.handleFileSelection);
-    }
-
-    handleFileSelection(e) {
-        const file = e.target.files[0];
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            this.student = Student.parse(reader.result);
-            showStudent();
-        }
-
-        reader.readAsText(file)
-    }
 }
 
 // Creates a element with the given tag and text contents
@@ -476,4 +453,4 @@ function appendBreak(node) {
     node.appendChild(br);
 }
 
-export { Page, createElemWithText, appendBreak }
+export { Person, Student, Course, Page, createElemWithText, appendBreak }
