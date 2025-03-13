@@ -137,7 +137,8 @@ displays navigation links larger on mobile browsers
 }
 
 .course-title{
-
+     text-decoration: underline;
+     text-decoration-thickness: 1px;
 }
 
 .course-info{

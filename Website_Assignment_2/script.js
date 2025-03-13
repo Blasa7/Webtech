@@ -498,26 +498,6 @@ function showStudent() {
         let description = createElemWithText("li", "Course description " + course.description);
         courseInfo.appendChild(description);
     });
-
-    for (i = 0; i < student.courses.length; i++){
-
-    }
-
-    let courses = createElemWithText("li", "Student courses: " + student.courses)
-
-    // let course = student.courses[0];
-    // let courseTeacher = course.teacher;
-    // let courseName = createElemWithText("h1", course.title);
-    // courseName.className = "section__title";
-
-    // let courseInfo = document.createElement('ul');
-    // let coTeacher = createElemWithText('li', "Teacher:" + courseTeacher.firstName + " " + courseTeacher.lastName);
-    // let courseDescription = createElemWithText('li', "Description: " + course.description);
-    // courseInfo.appendChild(coTeacher);
-    // courseInfo.appendChild(courseDescription);
-
-    // main.appendChild(courseName);
-    // main.appendChild(courseInfo);
 }
 
 // Creates a element with the given tag and text contents
