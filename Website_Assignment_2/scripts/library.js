@@ -470,9 +470,10 @@ function createElemWithText(tagName, content) {
     return elem;
 }
 
+// Appends a break line to the given element.
 function appendBreak(node) {
     const br = document.createElement("br");
     node.appendChild(br);
 }
 
-export { Page }
+export { Page, createElemWithText, appendBreak }
