@@ -320,9 +320,14 @@ class Page {
 
     // Appends a select element to the footer that allowst selecting elements.
     initElementPicker() {
+        const elemPickerLabel = createElemWithText("label", "Choose element: ");
+        elemPickerLabel.setAttribute("for", "element-picker");
+        this.footer.appendChild(elemPickerLabel);
+
         this.elemPicker = document.createElement("select");
-        this.elemPicker.onchange = () => { this.loadTagValues(); }
+        this.elemPicker.onchange = () => { this.loadTagValues(); };
         this.elemPicker.className = "footer__menu";
+        this.elemPicker.id = "element-picker";
 
         const bodyOption = createElemWithText("option", "Body");
         bodyOption.value = "body";
@@ -343,18 +348,26 @@ class Page {
     initElementEditor() {
         const elemEditor = document.createElement("form");
 
-        const fontSizeLabel = createElemWithText("label", "Font size:");
+        const fontSizeLabel = createElemWithText("label", "Font size: ");
+        fontSizeLabel.setAttribute("for", "font-size-input");
+
         this.fontSizeInput = document.createElement("input");
         this.fontSizeInput.onchange = this.setTagFontSize.bind(this);
+        this.fontSizeInput.id = "font-size-input";
+
         elemEditor.appendChild(fontSizeLabel);
         elemEditor.appendChild(this.fontSizeInput);
 
         appendBreak(elemEditor);
 
-        const fontColorLabel = createElemWithText("label", "Font color:");
+        const fontColorLabel = createElemWithText("label", "Font color: ");
+        fontColorLabel.setAttribute("for", "font-color-input");
+
         this.fontColorInput = document.createElement("input");
         this.fontColorInput.type = "color";
         this.fontColorInput.onchange = this.setTagColor.bind(this);
+        this.fontColorInput.id = "font-color-input";
+
         elemEditor.appendChild(fontColorLabel);
         elemEditor.appendChild(this.fontColorInput);
 
@@ -368,7 +381,7 @@ class Page {
         this.fontFamilyPicker = document.createElement('select');
         this.fontFamilyPicker.onchange = this.setFontFamily.bind(this);
         this.fontFamilyPicker.setAttribute("id", "font-select");
-        const label = createElemWithText('label', "Font family:");
+        const label = createElemWithText('label', "Font family: ");
         label.setAttribute("for", "font-select");
 
         const fontOption1 = createElemWithText("option", "Arial");

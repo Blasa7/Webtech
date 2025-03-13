@@ -14,8 +14,13 @@ class CoursePage extends li.Page {
     }
 
     initFileReader() {
-        var fileReader = document.createElement("input");
-        fileReader.setAttribute("type", "file");
+        let label = li.createElemWithText("label", "Please choose a courses .json file: ");
+        label.setAttribute("for", "courses-file-reader");
+        this.main.appendChild(label);
+
+        let fileReader = document.createElement("input");
+        fileReader.type = "file";
+        fileReader.id = "courses-file-reader";
         this.main.appendChild(fileReader);
         fileReader.addEventListener("change", this.handleFileSelection.bind(this));
     }
