@@ -342,6 +342,7 @@ class Page {
     // Appends a form to the footer that allows editing the selected element.
     initElementEditor() {
         const elemEditor = document.createElement("form");
+        elemEditor.addEventListener("submit", (e) => { e.preventDefault() }); //Prevent page reload on submit.
 
         const fontSizeLabel = createElemWithText("label", "Font size: ");
         fontSizeLabel.setAttribute("for", "font-size-input");
@@ -360,7 +361,7 @@ class Page {
 
         this.fontColorInput = document.createElement("input");
         this.fontColorInput.type = "color";
-        this.fontColorInput.onchange = this.setTagColor.bind(this);
+        this.fontColorInput.oninput = this.setTagColor.bind(this);
         this.fontColorInput.id = "font-color-input";
 
         elemEditor.appendChild(fontColorLabel);
@@ -410,14 +411,20 @@ class Page {
 
         // If at least one of this type of element exists load its values.
         if (elems.length > 0) {
-            this.fontSizeInput.value = elems.item(0).style.fontSize;
-            this.fontColorInput.value = elems.item(0).style.color;
-            this.fontFamilyPicker.value = elems.item(0).style.fontFamily;
+            if (elems.item(0).style.fontSize != ""){
+                this.fontSizeInput.value = elems.item(0).style.fontSize;
+            }
+            if (elems.item(0).style.color != ""){
+                this.fontColorInput.value = elems.item(0).style.color;
+            }
+            if (elems.item(0).style.fontFamily != ""){
+                this.fontFamilyPicker.value = elems.item(0).style.fontFamily;
+            }
         }
         // Otherwise default to nothing.
         else {
-            this.fontSizeInput.value = "";
-            this.fontColorInput.value = "";
+            this.fontSizeInput.value = "1rem";
+            this.fontColorInput.value = "#000000";
         }
     }
 
@@ -431,7 +438,7 @@ class Page {
 
     setTagColor() {
         let elems = document.getElementsByTagName(this.elemPicker.value);
-        
+
         for (let i = 0; i < elems.length; i++) {
             elems.item(i).style.color = this.fontColorInput.value;
         }
@@ -463,9 +470,9 @@ function appendBreak(node) {
 }
 
 // Creates a section and appends it to the given element.
-function createSection(title,string,node, h="h2") {
+function createSection(title, string, node, h = "h2") {
     const section = document.createElement('section');
-    const sectionTitle = li.createElemWithText(h,title);
+    const sectionTitle = li.createElemWithText(h, title);
     const sectionText = document.createTextNode(string);
     section.appendChild(sectionTitle);
     section.appendChild(sectionText);
@@ -473,9 +480,9 @@ function createSection(title,string,node, h="h2") {
 }
 
 // Creates an article and appends it to the given element.
-function createArticle(title,string,node, h="h2") {
+function createArticle(title, string, node, h = "h2") {
     const article = document.createElement('article');
-    const articleTitle = li.createElemWithText(h,title);
+    const articleTitle = li.createElemWithText(h, title);
     const articleText = document.createTextNode(string);
     article.appendChild(articleTitle);
     article.appendChild(articleText);
