@@ -8,6 +8,7 @@ class IndexPage extends li.Page {
     init() {
         super.init();
         this.initSection();
+        this.initArticle();
     }
     initSection() {
         const section = document.createElement('section');
@@ -23,6 +24,23 @@ class IndexPage extends li.Page {
         section.appendChild(sectionTitle);
         section.appendChild(sectionText);
         this.main.appendChild(section);
+    }
+    initArticle() {
+        const article = document.createElement('article');
+        const articleTitle = li.createElemWithText('h2',"Article Title");
+        const articleText = document.createTextNode(`Quibus actis, Quid ergo? inquit ille, 
+            quoniam oratorias exercitationes non tu quidem, ut spero, reliquisti, 
+            sed certe philosophiam illis anteposuisti, possumne aliquid audire? Tu vero, 
+            inquam, vel audire vel dicere; nec enim, id quod recte existimas, oratoria illa 
+            studia deserui, quibus etiam te incendi, quamquam flagrantissumum acceperam, nec ea, 
+            quae nunc tracto, minuunt, sed augent potius illam facultatem. Nam cum hoc genere philosophiae, 
+            quod nos sequimur, magnam habet orator societatem; subtilitatem enim ab Academia mutuatur et ei 
+            vicissim reddit ubertatem orationis et ornamenta dicendi. Quam ob rem, inquam, quoniam utriusque 
+            studii nostra possessio est, hodie, utro frui malis, optio sit tua. Tum Hirtius: Gratissumum, inquit, 
+            et tuorum omnium simile; nihil enim umquam abnuit meo studio voluntas tua.`);
+        article.appendChild(articleTitle);
+        article.appendChild(articleText);
+        this.main.appendChild(article);
     }
 }
 
