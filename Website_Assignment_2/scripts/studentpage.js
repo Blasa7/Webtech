@@ -85,7 +85,7 @@ class StudentPage extends li.Page {
             let teacher = li.createElemWithText("li", "Course teacher: " + course.teacher.firstName + " " + course.teacher.lastName);
             courseInfo.appendChild(teacher);
 
-            let description = li.createElemWithText("li", "Course description " + course.description);
+            let description = li.createElemWithText("li", "Course description: " + course.description);
             courseInfo.appendChild(description);
         });
     }

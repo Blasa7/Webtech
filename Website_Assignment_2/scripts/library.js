@@ -431,7 +431,7 @@ class Page {
 
     setTagColor() {
         let elems = document.getElementsByTagName(this.elemPicker.value);
-
+        
         for (let i = 0; i < elems.length; i++) {
             elems.item(i).style.color = this.fontColorInput.value;
         }
