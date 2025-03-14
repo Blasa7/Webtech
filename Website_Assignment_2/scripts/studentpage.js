@@ -3,6 +3,8 @@ import * as li from './library.js';
 class StudentPage extends li.Page {
     student;
 
+    updateNotification;
+
     constructor() {
         super("students.html", "Students");
     }
@@ -14,15 +16,29 @@ class StudentPage extends li.Page {
     }
 
     initFileReader() {
+        let form = document.createElement("form");
+        this.main.appendChild(form);
+
         let label = li.createElemWithText("label", "Please choose a student .json file: ");
         label.setAttribute("for", "student-file-reader");
-        this.main.appendChild(label);
+        form.appendChild(label);
 
         let fileReader = document.createElement("input");
         fileReader.type = "file";
         fileReader.id = "student-file-reader";
-        this.main.appendChild(fileReader);
+        form.appendChild(fileReader);
         fileReader.addEventListener("change", this.handleFileSelection.bind(this));
+
+        // Event bubling since the update animation is triggered after the file is loaded.
+        form.onchange = (e)=> {
+            if (typeof this.updateNotification !== "undefined"){
+                this.updateNotification.remove();
+            }
+            this.updateNotification = li.createElemWithText("p", "Loaded!");
+            form.appendChild(this.updateNotification);
+            this.updateNotification.className = "main-content__update-notification";
+            this.updateNotification.style.opacity = 0;
+        };
     }
 
     handleFileSelection(e) {
