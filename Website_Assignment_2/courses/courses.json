@@ -1,3 +1,4 @@
-{"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Johns\\\"}\",\"description\":\"Course about webtech.\"}",
+{"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"Sergey\\\",\\\"lastName\\\":\\\"Sonsnovsky\\\"}\",\"description\":\"Course about webtech.\"}",
 "{\"title\":\"Databases\",\"teacher\":\"{\\\"firstName\\\":\\\"Adam\\\",\\\"lastName\\\":\\\"Adams\\\"}\",\"description\":\"Course about databases.\"}",
-"{\"title\":\"Computer Architecture\",\"teacher\":\"{\\\"firstName\\\":\\\"Frank\\\",\\\"lastName\\\":\\\"Franko\\\"}\",\"description\":\"Course that learns you how to build your own computer.\"}"]}
+"{\"title\":\"Computer Architecture\",\"teacher\":\"{\\\"firstName\\\":\\\"Frank\\\",\\\"lastName\\\":\\\"Franko\\\"}\",\"description\":\"Course that learns you how to build your own computer.\"}",
+"{\"title\":\"Software Project\",\"teacher\":\"{\\\"firstName\\\":\\\"Hieke\\\",\\\"lastName\\\":\\\"Keuning\\\"}\",\"description\":\"Course where you make a software project at the end of your bachelor.\"}"]}

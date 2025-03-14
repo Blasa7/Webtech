@@ -1,5 +1,3 @@
-// TODO: Style sheet should all be in js code, header, footer, image and course hover.
-
 class Person {
     #firstName;
     #lastName;
@@ -311,6 +309,8 @@ class Page {
         this.initElementPicker();
         this.initElementEditor();
         this.initFontFamilyPicker();
+
+        this.initFooterLogo();
     }
 
     // Appends a select element to the footer that allowst selecting elements.
@@ -401,6 +401,14 @@ class Page {
 
         this.footer.appendChild(label);
         this.footer.appendChild(this.fontFamilyPicker);
+    }
+
+    initFooterLogo(){
+        const logo = document.createElement("img");
+        logo.className = "footer__img";
+        logo.alt = "Utrecht Univesity logo";
+        logo.src = "images/uu.png";
+        this.footer.appendChild(logo);
     }
 
     setTagFontSize() {

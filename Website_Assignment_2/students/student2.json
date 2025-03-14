@@ -4,6 +4,6 @@
 "email":"a.i.s.koens@students.uu.nl",
 "photo":"images\\ak.jpeg",
 "major":"Computer science",
-"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Johns\\\"}\",\"description\":\"Course about webtech.\"}",
+"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"Sergey\\\",\\\"lastName\\\":\\\"Sosnovsky\\\"}\",\"description\":\"Course about webtech.\"}",
 "{\"title\":\"Databases\",\"teacher\":\"{\\\"firstName\\\":\\\"Adam\\\",\\\"lastName\\\":\\\"Adams\\\"}\",\"description\":\"Course about databases.\"}"]
 }
