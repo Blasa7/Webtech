@@ -1,1 +1,3 @@
-{"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Johns\\\"}\",\"description\":\"Course about webtech.\"}"]}
+{"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Johns\\\"}\",\"description\":\"Course about webtech.\"}",
+"{\"title\":\"Databases\",\"teacher\":\"{\\\"firstName\\\":\\\"Adam\\\",\\\"lastName\\\":\\\"Adams\\\"}\",\"description\":\"Course about databases.\"}",
+"{\"title\":\"Computer Architecture\",\"teacher\":\"{\\\"firstName\\\":\\\"Frank\\\",\\\"lastName\\\":\\\"Franko\\\"}\",\"description\":\"Course that learns you how to build your own computer.\"}"]}

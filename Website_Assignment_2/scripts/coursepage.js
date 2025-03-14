@@ -44,7 +44,9 @@ class CoursePage extends li.Page {
         this.main.appendChild(courseSectionTitle);
 
         let courseList = document.createElement("ul");
-        this.main.appendChild(courseList);
+        let courseSection = document.createElement('section');
+        courseSection.appendChild(courseList);
+        this.main.appendChild(courseSection);
 
         this.courses.forEach(course => {
             let courseListItem = li.createElemWithText("li", course.title);
@@ -58,7 +60,7 @@ class CoursePage extends li.Page {
             let teacher = li.createElemWithText("li", "Course teacher: " + course.teacher.firstName + " " + course.teacher.lastName);
             courseInfo.appendChild(teacher);
 
-            let description = li.createElemWithText("li", "Course description " + course.description);
+            let description = li.createElemWithText("li", "Course description: " + course.description);
             courseInfo.appendChild(description);
         });
     }
