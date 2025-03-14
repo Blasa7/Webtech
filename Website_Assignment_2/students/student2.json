@@ -1,0 +1,8 @@
+{"firstName":"Abracha",
+"lastName":"Koens",
+"age":22,"hobbies":["Gaming","Programming"],
+"email":"a.i.s.koens@students.uu.nl",
+"photo":"images\\ak.jpeg",
+"major":"Computer science",
+"courses":["{\"title\":\"Webtech\",\"teacher\":\"{\\\"firstName\\\":\\\"John\\\",\\\"lastName\\\":\\\"Johns\\\"}\",\"description\":\"Course about webtech.\"}"]
+}

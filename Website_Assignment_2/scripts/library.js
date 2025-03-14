@@ -287,7 +287,6 @@ class Page {
 
         const navBarClasses = ["nav__item", "nav__link"];
         let navBar = [["index.html", "Main"], ["students.html", "Students"], ["courses.html", "Courses"]];
-        //navBar = navBar.filter((nav) => nav[0] != this.href);
 
         let l = navBar.length;
         for (let i = 0; i < l; i++) {
@@ -299,13 +298,6 @@ class Page {
             listNode.appendChild(link);
             list.appendChild(listNode);
         }
-        const styleButtons = document.createElement('p');
-        const button1 = document.createElement('button');
-        styleButtons.appendChild(button1);
-        this.header.appendChild(styleButtons);
-        styleButtons.className = "style__menu";
-
-        //button1.onclick;
     }
 
     initMain() {
@@ -474,3 +466,56 @@ function appendBreak(node) {
 }
 
 export { Person, Student, Course, Page, createElemWithText, appendBreak }
+
+
+// Used to create the first json file in correct format.
+function createStudentJsonFile() {
+    let teacher = new Person();
+    teacher.firstName = "John";
+    teacher.lastName = "Johns";
+
+    let course = new Course();
+    course.title = "Webtech";
+    course.teacher = teacher;
+    course.description = "Course about webtech.";
+
+    let student = new Student()
+    student.firstName = "Floris"
+    student.lastName = "Gruijter"
+    student.age = 21;
+    student.hobbies = ["Gaming", "Programming"]
+    student.email = "f.t.degruijter@students.uu.nl";
+    student.photo = "\images\ftg.jpg";
+    student.major = "Computer science"
+    student.courses = [course]
+
+    let json = student.stringify();
+    const fs = require('node:fs');
+    fs.writeFileSync("student1.json", json)
+}
+
+// Creates a form for entering student information
+function initForm() {
+    const studentForm = document.createElement("form");
+    main.appendChild(studentForm);
+
+    const studentInfoArray = ['label', ["Student Name: ", "Student Age: ", "Hobbies: ", "Email: ", "Major: "]]
+    let l = studentInfoArray[1].length;
+    console.log(l);
+    for (let i = 0; i < l; i++) {
+        const par = document.createElement('p');
+        studentForm.appendChild(par);
+        const label = createElemWithText('label', studentInfoArray[1][i]);
+        const input = document.createElement('input');
+        label.setAttribute
+        par.appendChild(label);
+        par.appendChild(input);
+    }
+
+    const button = document.createElement('button');
+    button.setAttribute("type", "submit");
+    button.setAttribute('style', "height:20px; width:60px")
+    const text = document.createTextNode("submit");
+    button.appendChild(text);
+    studentForm.appendChild(button);
+}
