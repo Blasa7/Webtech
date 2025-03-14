@@ -25,6 +25,7 @@ class IndexPage extends li.Page {
         section.appendChild(sectionText);
         this.main.appendChild(section);
     }
+
     initArticle() {
         const article = document.createElement('article');
         const articleTitle = li.createElemWithText('h2',"Article Title");

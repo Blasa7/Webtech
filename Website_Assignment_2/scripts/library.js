@@ -462,7 +462,28 @@ function appendBreak(node) {
     node.appendChild(br);
 }
 
-export { Person, Student, Course, Page, createElemWithText, appendBreak }
+// Creates a section and appends it to the given element.
+function createSection(title,string,node, h="h2") {
+    const section = document.createElement('section');
+    const sectionTitle = li.createElemWithText(h,title);
+    const sectionText = document.createTextNode(string);
+    section.appendChild(sectionTitle);
+    section.appendChild(sectionText);
+    node.appendChild(section);
+}
+
+// Creates an article and appends it to the given element.
+function createArticle(title,string,node, h="h2") {
+    const article = document.createElement('article');
+    const articleTitle = li.createElemWithText(h,title);
+    const articleText = document.createTextNode(string);
+    article.appendChild(articleTitle);
+    article.appendChild(articleText);
+    node.appendChild(article);
+}
+
+
+export { Person, Student, Course, Page, createElemWithText, appendBreak, createSection, createArticle }
 
 
 // Used to create the first json file in correct format.

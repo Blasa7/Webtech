@@ -43,6 +43,8 @@ class StudentPage extends li.Page {
         nameElem.className = "section__title"
 
         let studentInfo = document.createElement("ul");
+        let studentSection = document.createElement('section');
+        studentSection.appendChild(studentInfo);
 
         let age = li.createElemWithText("li", "Student age: " + this.student.age);
         let hobbies = li.createElemWithText("li", "Student hobbies: " + this.student.hobbies);
@@ -60,14 +62,16 @@ class StudentPage extends li.Page {
         photo.className = "section__img";
 
         this.main.appendChild(nameElem);
-        this.main.appendChild(studentInfo);
+        this.main.appendChild(studentSection);
         this.main.appendChild(photo);
 
         let courseSectionTitle = li.createElemWithText("h2", "Student Courses");
         this.main.appendChild(courseSectionTitle);
 
         let courseList = document.createElement("ul");
-        this.main.appendChild(courseList);
+        let courseSection = document.createElement('section');
+        courseSection.appendChild(courseList);
+        this.main.appendChild(courseSection);
 
         this.student.courses.forEach(course => {
             let courseListItem = li.createElemWithText("li", course.title);
