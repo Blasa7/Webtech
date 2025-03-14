@@ -320,7 +320,6 @@ class Page {
         this.footer.appendChild(elemPickerLabel);
 
         this.elemPicker = document.createElement("select");
-        this.elemPicker.onchange = () => { this.loadTagValues(); };
         this.elemPicker.className = "footer__menu";
         this.elemPicker.id = "element-picker";
 
@@ -402,30 +401,6 @@ class Page {
 
         this.footer.appendChild(label);
         this.footer.appendChild(this.fontFamilyPicker);
-    }
-
-
-    // Loads the current values for the selected element in the element picker.
-    loadTagValues() {
-        let elems = document.getElementsByTagName(this.elemPicker.value);
-
-        // If at least one of this type of element exists load its values.
-        if (elems.length > 0) {
-            if (elems.item(0).style.fontSize != ""){
-                this.fontSizeInput.value = elems.item(0).style.fontSize;
-            }
-            if (elems.item(0).style.color != ""){
-                this.fontColorInput.value = elems.item(0).style.color;
-            }
-            if (elems.item(0).style.fontFamily != ""){
-                this.fontFamilyPicker.value = elems.item(0).style.fontFamily;
-            }
-        }
-        // Otherwise default to nothing.
-        else {
-            this.fontSizeInput.value = "1rem";
-            this.fontColorInput.value = "#000000";
-        }
     }
 
     setTagFontSize() {
