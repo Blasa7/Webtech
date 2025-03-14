@@ -246,8 +246,6 @@ class Page {
     // Page specific 
     headerString;
 
-
-
     constructor(href, headerString) {
         this.href = href;
         this.headerString = headerString;
@@ -270,11 +268,10 @@ class Page {
     initHeader() {
         this.header = document.createElement("header");
         this.header.className = "header";
-        this.body.appendChild(this.header);
-
         const headerTitle = createElemWithText("h1", this.headerString);
         headerTitle.className = "header__title";
         this.header.appendChild(headerTitle);
+        this.body.appendChild(this.header);
     }
 
     initNav() {
@@ -282,11 +279,11 @@ class Page {
         this.header.appendChild(nav);
         const list = document.createElement("ul");
         nav.appendChild(list);
-        nav.setAttribute("class", "header nav");
+        nav.setAttribute("class", "nav");
         list.setAttribute("class", "nav__list");
 
         const navBarClasses = ["nav__item", "nav__link"];
-        let navBar = [["index.html", "Main"], ["students.html", "Students"], ["courses.html", "Courses"]];
+        let navBar = [["index.html", "Home"], ["students.html", "Students"], ["courses.html", "Courses"]];
 
         let l = navBar.length;
         for (let i = 0; i < l; i++) {
