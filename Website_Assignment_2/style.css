@@ -79,6 +79,9 @@ displays navigation links larger on mobile browsers
      .nav__link {
           font-size: 4rem;
      }
+     .main-content {
+          font-size: 2rem;
+     }
 
 }
 .nav__link:hover,
