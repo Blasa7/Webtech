@@ -1,0 +1,19 @@
+
+body{
+    background-color: rgb(93, 114, 114);
+}
+
+form {
+    background-color: bisque;
+    padding: 1em;
+    border-radius: 1em;
+    border: 2px solid black;
+    width: 500px;
+    height: 250px;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(50%,50%);
+}
+p {
+    padding: 0.5em;
+}
