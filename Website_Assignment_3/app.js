@@ -8,7 +8,6 @@ import Database from 'better-sqlite3';
 // npm install
 // npm run dev
 
-const db = new Database('app.db');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const port = process.env.PORT;
@@ -33,8 +32,16 @@ app.post('/register', (req,res) => {
 });
 
 app.post('/login', (req,res) => {
-    console.log(req.body);
-    res.redirect('/login.html');
+    let un = req.body.username;
+    try {
+        let user = selectUser(un);
+        let passWord = user.password;
+        let userName = req.body.username;
+        res.render('welcome.ejs',{username: userName, password: passWord});
+    } catch{
+        res.redirect('/login.html');
+        console.log('Incorrect username or password')
+    }
 });
 
 app.listen(port, () => {
@@ -49,7 +56,22 @@ function addUser(username, password) {
     console.log(`User ${username} added to the database.`)
 }
 
+function selectUser(username) {
+    const db = new Database('app.db');
+    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+    console.log(user);
+    db.close();
+    return user; 
+}
 
+// logAllUsers();
+function logAllUsers() {
+    const db = new Database('app.db');
+    const query = `SELECT * FROM users`;
+    const users = db.prepare(query).all();
+    console.log(users);
+    db.close();
+}
 
 
 
