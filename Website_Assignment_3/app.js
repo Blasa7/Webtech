@@ -19,25 +19,54 @@ var db = new Database(dbFile)
 if (!exists) {
     db.exec("PRAGMA foreign_keys = ON;") // Necessary to enable foreign keys.
 
+    // Create courses table.
+    const courses = db.prepare(
+        "CREATE TABLE courses (" +
+        "id INTEGER PRIMARY KEY," +
+        "title STRING NOT NULL," +
+        "description STRING," +
+        "teacher STRING" +
+        ")"
+    )
+    courses.run()
+
+    // Create table for user courses.
+    const user_courses = db.prepare(
+        "CREATE TABLE student_courses(" +
+        "user_id INTEGER," +
+        "course_id INTEGER," +
+        "FOREIGN KEY (user_id) REFERENCES users(id)," +
+        "FOREIGN KEY (course_id) REFERENCES courses(id)" +
+        ")"
+    )
+    user_courses.run()
+
     // Create users table.
     const users = db.prepare(
         "CREATE TABLE users (" +
         "id INTEGER PRIMARY KEY," +
         "username STRING NOT NULL UNIQUE," +
-        "password STRING NOT NULL" +
+        "password STRING NOT NULL," +
+        "age INTEGER," +
+        "email STRING," +
+        "photo BLOB," +
+        "hobbies STRING," +
+        "program INTEGER," +
+        "courses INTEGER," +
+        "FOREIGN KEY (program) REFERENCES programs(id)" +
         ")"
     );
     users.run()
 
-    // Create courses table.
-    const courses = db.prepare(
-        "CREATE TABLE courses (" +
+    // Create programs table.
+    const programs = db.prepare(
+        "CREATE TABLE programs (" +
         "id INTEGER PRIMARY KEY," +
-        "teacher STRING NOT NULL," +
+        "title STRING NOT NULL," +
         "description STRING" +
         ")"
     )
-    courses.run()
+    programs.run()
 
     // Create friend table. With a foreign key in the users table.
     const friends = db.prepare(
