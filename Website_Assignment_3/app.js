@@ -42,7 +42,7 @@ if (!exists) {
     user_courses.run()
 
     // Create users table.
-    const users = db.prepare(
+    const users = db.prepare( // Maybe split the passwords into their own table.
         "CREATE TABLE users (" +
         "id INTEGER PRIMARY KEY," +
         "username STRING NOT NULL UNIQUE," +
@@ -92,12 +92,29 @@ const port = process.env.PORT;
 const app = express();
 app.set('view engine', 'ejs');
 
+// Session
+app.set("trust proxy", 1)
+app.use(session({
+    secret: "1234", //TODO: Change
+    resave: false,
+    saveUninitialized: true,
+    cookie: {}
+}))
+
 // Parses form data
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/html')));
 
+// Http requests
+app.get('/', (req, res) => {
+    if (req.session.user) { // Session exists skip login
+        res.render('welcome.ejs', { username: req.session.user.username, password: req.session.user.password });
+    } else { // Session does not exists go to login 
+        res.redirect('/login.html');
+    }
+})
 
 app.post('/register', (req, res) => {
     console.log(req.body);
@@ -109,12 +126,10 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    let un = req.body.username;
     try {
-        let user = selectUser(un);
-        let passWord = user.password;
-        let userName = req.body.username;
-        res.render('welcome.ejs', { username: userName, password: passWord });
+        let user = login(req.body.username, req.body.password);
+        req.session.user = user; // Update session with current user login
+        res.render('welcome.ejs', { username: user.username, password: user.password });
     } catch {
         res.redirect('/login.html');
         console.log('Incorrect username or password')
@@ -124,6 +139,15 @@ app.post('/login', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+
+// Check username and password combination
+function login(username, password){
+    const db = new Database('app.db');
+    const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
+    console.log(user);
+    db.close();
+    return user;
+}
 
 function addUser(username, password) {
     const db = new Database('app.db');
