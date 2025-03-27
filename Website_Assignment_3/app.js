@@ -52,7 +52,6 @@ if (!exists) {
         "photo BLOB," +
         "hobbies STRING," +
         "program INTEGER," +
-        "courses INTEGER," +
         "FOREIGN KEY (program) REFERENCES programs(id)" +
         ")"
     );
@@ -110,7 +109,7 @@ app.use(express.static(path.join(__dirname, 'public/html')));
 // Http requests
 app.get('/', (req, res) => {
     if (req.session.user) { // Session exists skip login
-        res.render('welcome.ejs', { username: req.session.user.username, password: req.session.user.password });
+        res.render('profile.ejs', { user: req.session.user });
     } else { // Session does not exists go to login 
         res.redirect('/login.html');
     }
@@ -129,10 +128,21 @@ app.post('/login', (req, res) => {
     try {
         let user = login(req.body.username, req.body.password);
         req.session.user = user; // Update session with current user login
-        res.render('welcome.ejs', { username: user.username, password: user.password });
+        res.render('profile.ejs', { user: req.session.user });
     } catch {
         res.redirect('/login.html');
         console.log('Incorrect username or password')
+    }
+});
+
+app.post('/update-profile', (req, res) => {
+    try {
+        let user = updateUser(req.session.user.id, req.body.username, req.body.password, req.body.age, req.body.email, req.body.photo, req.body.hobbies, req.body.program);
+        req.session.user = user;
+        console.log(user)
+        res.render('profile.ejs', { user: req.session.user })
+    } catch {
+        console.log("Failed to update user profile!")
     }
 });
 
@@ -141,7 +151,7 @@ app.listen(port, () => {
 })
 
 // Check username and password combination
-function login(username, password){
+function login(username, password) {
     const db = new Database('app.db');
     const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
     console.log(user);
@@ -160,7 +170,6 @@ function addUser(username, password) {
 function selectUser(username) {
     const db = new Database('app.db');
     const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    console.log(user);
     db.close();
     return user;
 }
@@ -172,6 +181,20 @@ function logAllUsers() {
     const users = db.prepare(query).all();
     console.log(users);
     db.close();
+}
+
+function updateUser(old_user_id, username, password, age, email, photo, hobbies, program) {
+    program = program || null // Foreign key accepts null but not undefined
+
+    const db = new Database('app.db');
+    db.prepare(`
+    UPDATE users SET 
+    username = ?, password = ?, age = ?, email = ?,
+    photo = ?, hobbies = ?, program = ?
+    WHERE id = ?
+    `).run(username, password, age, email, photo, hobbies, program, old_user_id);
+    db.close();
+    return selectUser(username);
 }
 
 function addCourse() {
