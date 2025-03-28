@@ -4,6 +4,7 @@ import path from 'path';
 import session from 'express-session';
 import Database from 'better-sqlite3';
 import fs from 'fs'
+import { initProfilePage } from './generatedPages/generateHTML.js';
 
 
 // run: 
@@ -56,6 +57,19 @@ if (!exists) {
         ")"
     );
     users.run()
+
+    // Create user_posts table.
+    const user_posts = db.prepare(
+        "CREATE TABLE user_posts (" +
+        "id INTEGER PRIMARY KEY," +
+        "user_id INTEGER NOT NULL," +
+        "title STRING NOT NULL," +
+        "text STRING NOT NULL," +
+        "posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+        "FOREIGN KEY (userid) REFERENCES users(id)" +
+        ")"
+    );
+    user_posts.run()
 
     // Create programs table.
     const programs = db.prepare(
@@ -129,6 +143,7 @@ app.post('/login', (req, res) => {
         let user = login(req.body.username, req.body.password);
         req.session.user = user; // Update session with current user login
         res.render('profile.ejs', { user: req.session.user });
+        // res.redirect('/profile'); // 
     } catch {
         res.redirect('/login.html');
         console.log('Incorrect username or password')
@@ -146,15 +161,30 @@ app.post('/update-profile', (req, res) => {
     }
 });
 
+app.get('/profile', (req,res) => { // page generated with dom manipulation
+    let username = req.session.user.username;
+    if (username !== undefined) {
+        const html = initProfilePage(username);
+        res.send(html);
+    }
+    else {
+        res.redirect('/login');
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+
+
+
+
 
 // Check username and password combination
 function login(username, password) {
     const db = new Database('app.db');
     const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
-    console.log(user);
+    console.log(`${username} logged in.`);
     db.close();
     return user;
 }
@@ -172,15 +202,6 @@ function selectUser(username) {
     const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
     db.close();
     return user;
-}
-
-// logAllUsers();
-function logAllUsers() {
-    const db = new Database('app.db');
-    const query = `SELECT * FROM users`;
-    const users = db.prepare(query).all();
-    console.log(users);
-    db.close();
 }
 
 function updateUser(old_user_id, username, password, age, email, photo, hobbies, program) {
