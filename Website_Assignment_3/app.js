@@ -4,6 +4,7 @@ import path from 'path';
 import session from 'express-session';
 import Database from 'better-sqlite3';
 import fs from 'fs'
+import multer from 'multer';
 import { initProfilePage } from './generatedPages/generateHTML.js';
 
 
@@ -98,12 +99,22 @@ if (!exists) {
     const insertCourse1 = db.prepare(
         "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
     );
-    insertCourse1.run("A", "B", "C");
+    insertCourse1.run("Webtech", "Vak over webtech.", "Sergey Sosnovsky");
 
     const insertCourse2 = db.prepare(
         "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
     );
-    insertCourse2.run("D", "E", "F");
+    insertCourse2.run("Computationele Intelligentie", "Vak over computationele intelligentie.", "Dirk Thierens");
+
+    const insertProgram1 = db.prepare(
+        "INSERT INTO programs (title, description) VALUES (?, ?)"
+    );
+    insertProgram1.run("Informatica", "Programma over informatica.");
+
+    const insertProgram2 = db.prepare(
+        "INSERT INTO programs (title, description) VALUES (?, ?)"
+    );
+    insertProgram2.run("Informatiekunde", "Programma over informatiekunde.");
 };
 
 db.close()
@@ -127,6 +138,10 @@ app.use(session({
         httpOnly: true
     }
 }))
+
+// Multer for file upload
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage })
 
 // Parses form data
 app.use(express.urlencoded({ extended: true }));
@@ -172,12 +187,17 @@ app.post('/login', (req, res) => {
     }
 });
 
-app.post('/update-profile', (req, res) => {
+app.post('/update-profile', upload.single("photo"), (req, res) => {
     try {
-        console.log(req.body.courses)
+        let body = JSON.parse(JSON.stringify(req.body))
+        let photo = req.file ? req.file.buffer : null;
         // Update database
-        let user = updateUser(req.session.user.id, req.body.username, req.body.password, req.body.age, req.body.email, req.body.photo, req.body.hobbies, req.body.program);
-        let courses = updateStudentCourses(user.id, req.body.courses);
+        let user = updateUser(req.session.user.id, body.username, body.password, body.age, body.email, body.hobbies, body.program);
+        let courses = updateStudentCourses(user.id, body.courses);
+
+        if (photo) {
+            updateUserPhoto(user.id, photo);
+        }
 
         // Update session
         req.session.user = user;
@@ -212,6 +232,27 @@ app.get('/student-courses', (req, res) => {
     }
 })
 
+app.get('/student-program', (req, res) => {
+    try {
+        const program = getUserProgram(req.session.user.id);
+        console.log(program)
+
+        res.send(program);
+    } catch {
+        console.log("Failed to retrieve student program!");
+    }
+})
+
+app.get('/student-photo', (req, res) => {
+    try {
+        const photo = getStudentPhoto(req.session.user.id);
+        console.log(photo)
+        res.send(photo);
+    } catch {
+        console.log("Failed to retrieve student photo!");
+    }
+})
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
@@ -220,7 +261,7 @@ app.listen(port, () => {
 
 // Loads the user profile with the session information from req.
 function loadProfile(req, res) {
-    return res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses() })
+    return res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() })
 }
 
 
@@ -251,16 +292,16 @@ function selectUser(username) {
     return user;
 }
 
-function updateUser(old_user_id, username, password, age, email, photo, hobbies, program) {
+function updateUser(old_user_id, username, password, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
     const db = new Database('app.db');
     db.prepare(`
     UPDATE users SET 
     username = ?, password = ?, age = ?, email = ?,
-    photo = ?, hobbies = ?, program = ?
+    hobbies = ?, program = ?
     WHERE id = ?
-    `).run(username, password, age, email, photo, hobbies, program, old_user_id);
+    `).run(username, password, age, email, hobbies, program, old_user_id);
     db.close();
     return selectUser(username);
 }
@@ -289,9 +330,26 @@ function updateStudentCourses(userID, courses) {
     return getUserCourses(userID);
 }
 
+function updateUserPhoto(userID, photo) {
+    const db = new Database('app.db');
+    db.prepare(`
+    UPDATE users SET 
+    photo = ?
+    WHERE id = ?
+    `).run(photo, userID);
+    db.close();
+}
+
 function getUserCourses(userID) {
     const db = new Database('app.db');
-    const courses = db.prepare('SELECT * FROM student_courses WHERE user_id = ?').all(userID);
+    const courses = db.prepare('SELECT course_id FROM student_courses WHERE user_id = ?').all(userID);
+    db.close();
+    return courses;
+}
+
+function getUserProgram(userID) {
+    const db = new Database('app.db');
+    const courses = db.prepare('SELECT program FROM users WHERE id = ?').get(userID);
     db.close();
     return courses;
 }
@@ -301,6 +359,20 @@ function getAvailableCourses() {
     const courses = db.prepare('SELECT * FROM courses').all();
     db.close();
     return courses;
+}
+
+function getAvailablePrograms() {
+    const db = new Database('app.db');
+    const courses = db.prepare('SELECT * FROM programs').all();
+    db.close();
+    return courses;
+}
+
+function getStudentPhoto(userID) {
+    const db = new Database('app.db');
+    const photo = db.prepare('SELECT photo FROM users WHERE id = ?').get(userID).photo;
+    db.close();
+    return photo;
 }
 
 

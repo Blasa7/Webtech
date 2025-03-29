@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login</title>
         <link rel="stylesheet" href="style.css">
-        <script src="../js/profile.js"></script>
+        <script src="../js/profile.js" defer></script>
     </head>
 
     <body>
@@ -14,7 +14,9 @@
             <h1>Your profile</h1>
         </header>
         <main>
-            <form action="/update-profile" method="post">
+            <img id="profile-photo" src="" alt="Profile Photo" style="width: 100px;height: 100px;"> <!-- Remove style and move to css -->
+
+            <form action="/update-profile" method="post" enctype="multipart/form-data">
                 <label for="username">Username</label><br>
                 <input type="text" id="username" name="username"
                     value=<%=user.username%>><br>
@@ -29,17 +31,20 @@
                     value=<%=user.email%>><br>
                 <label for="photo">Photo</label><br>
                 <input type="file" id="photo" name="photo"
-                    value=<%=user.photo%>><br>
+                    value=<%=null%>><br>
                 <label for="hobbies">Hobbies</label><br>
                 <input type="text" id="hobbies" name="hobbies"
                     value=<%=user.hobbies%>><br>
                 <label for="program">Program</label><br>
-                <input type="text" id="program" name="program"
-                    value=<%=user.program%>><br>
+                <select id="program" name="program"><br>
+                    <% for (let i = 0; i < availablePrograms.length; i++) { %>
+                        <option class="profile-form__dropdown-option" value=<%=availablePrograms[i].id%>><%=availablePrograms[i].title%></option>
+                        <% } %>
+                </select>
                 <section>
                     <fieldset>
                         <legend>Courses</legend>
-                        <% for (var i=0; i < availableCourses.length; i++) { %>
+                        <% for (let i=0; i < availableCourses.length; i++) { %>
                         <label
                             for=<%=availableCourses[i].title%>><%=availableCourses[i].title
                             + ":" %></label>
