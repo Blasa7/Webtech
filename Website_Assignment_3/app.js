@@ -169,7 +169,6 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-    console.log(getAvailableCourses());
     try {
         // Check login credentials
         let user = login(req.body.username, req.body.password);
@@ -191,6 +190,7 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
     try {
         let body = JSON.parse(JSON.stringify(req.body))
         let photo = req.file ? req.file.buffer : null;
+
         // Update database
         let user = updateUser(req.session.user.id, body.username, body.password, body.age, body.email, body.hobbies, body.program);
         let courses = updateStudentCourses(user.id, body.courses);
@@ -235,7 +235,6 @@ app.get('/student-courses', (req, res) => {
 app.get('/student-program', (req, res) => {
     try {
         const program = getUserProgram(req.session.user.id);
-        console.log(program)
 
         res.send(program);
     } catch {
@@ -246,7 +245,7 @@ app.get('/student-program', (req, res) => {
 app.get('/student-photo', (req, res) => {
     try {
         const photo = getStudentPhoto(req.session.user.id);
-        console.log(photo)
+
         res.send(photo);
     } catch {
         console.log("Failed to retrieve student photo!");
@@ -263,10 +262,6 @@ app.listen(port, () => {
 function loadProfile(req, res) {
     return res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() })
 }
-
-
-
-
 
 // Check username and password combination
 function login(username, password) {

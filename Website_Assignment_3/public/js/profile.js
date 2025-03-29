@@ -29,12 +29,10 @@ reqProgram.open("GET", "student-program");
 reqProgram.send();
 
 
-
+// Fetch the photo and display it. Not all formats work .png does.
 const reqPhoto = new XMLHttpRequest();
 reqPhoto.responseType = "blob";
 reqPhoto.onload = () => {
-    //const blob = JSON.parse(reqPhoto.responseText);
-    //const blob= new Blob(JSON.parse(reqPhoto.responseText).photo)
     const blob = reqPhoto.response;
 
     if (blob) {
