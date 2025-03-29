@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="../js/profile.js"></script>
+    </head>
 
-<body>
-    <header>
-        <h1>Your profile</h1>
-    </header>
-    <main>
-        <form action="/update-profile" method="post">
-            <label for="username">Username</label><br>
-            <input type="text" id="username" name="username" value=<%=user.username%>><br>
-            <label for="password">Password</label><br>
-            <input type="text" id="password" name="password" value=<%=user.password%>><br>
-            <label for="age">Age</label><br>
-            <input type="number" id="age" name="age" value=<%=user.age%>><br>
-            <label for="email">Email</label><br>
-            <input type="email" id="email" name="email" value=<%=user.email%>><br>
-            <label for="photo">Photo</label><br>
-            <input type="file" id="photo" name="photo" value=<%=user.photo%>><br>
-            <label for="hobbies">Hobbies</label><br>
-            <input type="text" id="hobbies" name="hobbies" value=<%=user.hobbies%>><br>
-            <label for="program">Program</label><br>
-            <input type="text" id="program" name="program" value=<%=user.program%>><br>
-            <label for="courses">Courses</label><br>
-            <input type="text" id="courses" name="courses" value=<%=user.courses%>><br><br>
-            <input type="submit" value="Update!">
-        </form>
-    </main>
-    <footer>
+    <body>
+        <header>
+            <h1>Your profile</h1>
+        </header>
+        <main>
+            <form action="/update-profile" method="post">
+                <label for="username">Username</label><br>
+                <input type="text" id="username" name="username"
+                    value=<%=user.username%>><br>
+                <label for="password">Password</label><br>
+                <input type="text" id="password" name="password"
+                    value=<%=user.password%>><br>
+                <label for="age">Age</label><br>
+                <input type="number" id="age" name="age"
+                    value=<%=user.age%>><br>
+                <label for="email">Email</label><br>
+                <input type="email" id="email" name="email"
+                    value=<%=user.email%>><br>
+                <label for="photo">Photo</label><br>
+                <input type="file" id="photo" name="photo"
+                    value=<%=user.photo%>><br>
+                <label for="hobbies">Hobbies</label><br>
+                <input type="text" id="hobbies" name="hobbies"
+                    value=<%=user.hobbies%>><br>
+                <label for="program">Program</label><br>
+                <input type="text" id="program" name="program"
+                    value=<%=user.program%>><br>
+                <section>
+                    <fieldset>
+                        <legend>Courses</legend>
+                        <% for (var i=0; i < availableCourses.length; i++) { %>
+                        <label
+                            for=<%=availableCourses[i].title%>><%=availableCourses[i].title
+                            + ":" %></label>
+                        <input class="profile-form__input--checkbox"
+                            type="checkbox" id=<%=availableCourses[i].title%>
+                        name="courses[<%=availableCourses[i].title%>]"
+                        value=<%=availableCourses[i].id%>
+                        >
+                        <% } %>
+                    </fieldset>
+                    <input type="submit" value="Update!">
+                </form>
+            </main>
+            <footer>
 
-    </footer>
-</body>
+            </footer>
+        </body>
 
-</html>
+    </html>

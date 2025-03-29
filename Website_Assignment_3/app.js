@@ -66,7 +66,7 @@ if (!exists) {
         "title STRING NOT NULL," +
         "text STRING NOT NULL," +
         "posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-        "FOREIGN KEY (userid) REFERENCES users(id)" +
+        "FOREIGN KEY (user_id) REFERENCES users(id)" +
         ")"
     );
     user_posts.run()
@@ -93,6 +93,17 @@ if (!exists) {
         ")"
     )
     friends.run()
+
+    // Insert some dummy values
+    const insertCourse1 = db.prepare(
+        "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
+    );
+    insertCourse1.run("A", "B", "C");
+
+    const insertCourse2 = db.prepare(
+        "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
+    );
+    insertCourse2.run("D", "E", "F");
 };
 
 db.close()
@@ -110,8 +121,11 @@ app.set("trust proxy", 1)
 app.use(session({
     secret: "1234", //TODO: Change
     resave: false,
-    saveUninitialized: true,
-    cookie: {}
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true
+    }
 }))
 
 // Parses form data
@@ -123,7 +137,8 @@ app.use(express.static(path.join(__dirname, 'public/html')));
 // Http requests
 app.get('/', (req, res) => {
     if (req.session.user) { // Session exists skip login
-        res.render('profile.ejs', { user: req.session.user });
+        //res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses() });
+        res = loadProfile(req, res);
     } else { // Session does not exists go to login 
         res.redirect('/login.html');
     }
@@ -139,11 +154,18 @@ app.post('/register', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+    console.log(getAvailableCourses());
     try {
+        // Check login credentials
         let user = login(req.body.username, req.body.password);
+        user.courses = getUserCourses(user.id);
+
+        // Update session
         req.session.user = user; // Update session with current user login
-        res.render('profile.ejs', { user: req.session.user });
-        // res.redirect('/profile'); // 
+        req.session.save()
+
+        // Load profile page
+        res = loadProfile(req, res);
     } catch {
         res.redirect('/login.html');
         console.log('Incorrect username or password')
@@ -152,16 +174,24 @@ app.post('/login', (req, res) => {
 
 app.post('/update-profile', (req, res) => {
     try {
+        console.log(req.body.courses)
+        // Update database
         let user = updateUser(req.session.user.id, req.body.username, req.body.password, req.body.age, req.body.email, req.body.photo, req.body.hobbies, req.body.program);
+        let courses = updateStudentCourses(user.id, req.body.courses);
+
+        // Update session
         req.session.user = user;
-        console.log(user)
-        res.render('profile.ejs', { user: req.session.user })
-    } catch {
-        console.log("Failed to update user profile!")
+        req.session.user.courses = courses;
+
+        // Load new page
+        res = loadProfile(req, res);
+    } catch (err) {
+        console.log("Failed to update user profile!");
+        console.log(err);
     }
 });
 
-app.get('/profile', (req,res) => { // page generated with dom manipulation
+app.get('/profile', (req, res) => { // page generated with dom manipulation
     let username = req.session.user.username;
     if (username !== undefined) {
         const html = initProfilePage(username);
@@ -172,9 +202,26 @@ app.get('/profile', (req,res) => { // page generated with dom manipulation
     }
 });
 
+app.get('/student-courses', (req, res) => {
+    try {
+        const courses = getUserCourses(req.session.user.id);
+
+        res.send(courses);
+    } catch {
+        console.log("Failed to retrieve student courses!");
+    }
+})
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
+
+// Functions to load pages
+
+// Loads the user profile with the session information from req.
+function loadProfile(req, res) {
+    return res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses() })
+}
 
 
 
@@ -218,16 +265,42 @@ function updateUser(old_user_id, username, password, age, email, photo, hobbies,
     return selectUser(username);
 }
 
-function addCourse() {
-    //TODO
+function updateStudentCourses(userID, courses) {
+    const db = new Database('app.db');
+    db.prepare(`
+        DELETE FROM student_courses
+        WHERE user_id = ?
+        `).run(userID);
+
+    const insertStudentCourse = db.prepare(`
+        INSERT INTO student_courses
+        (user_id, course_id) VALUES (?, ?)
+        `);
+
+    if (courses) {
+        Object.values(courses).forEach(value => {
+            console.log(value)
+            insertStudentCourse.run(userID, value)
+        })
+    }
+
+    db.close();
+
+    return getUserCourses(userID);
 }
 
-function selectCourse() {
-    //TODO
+function getUserCourses(userID) {
+    const db = new Database('app.db');
+    const courses = db.prepare('SELECT * FROM student_courses WHERE user_id = ?').all(userID);
+    db.close();
+    return courses;
 }
 
-function logAllCourses() {
-    //TODO
+function getAvailableCourses() {
+    const db = new Database('app.db');
+    const courses = db.prepare('SELECT * FROM courses').all();
+    db.close();
+    return courses;
 }
 
 
