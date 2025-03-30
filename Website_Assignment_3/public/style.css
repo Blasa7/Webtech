@@ -1,9 +1,8 @@
-
-/*body{
+.credentials-body{
     background-color: rgb(93, 114, 114);
 }
 
-form {
+.credentials-form {
     background-color: bisque;
     padding: 1em;
     border-radius: 1em;
@@ -14,9 +13,9 @@ form {
     bottom: 50%;
     transform: translate(50%,50%);
 }
-p {
+.credentials-p {
     padding: 0.5em;
-}*/
+}
 
 * {
     box-sizing: border-box;
@@ -34,11 +33,6 @@ body {
     display: flex;
     flex-direction: column;
     line-height: 1.6;
-}
-
-button {
-    height: 20px;
-    width: 40px;
 }
 
 .header {

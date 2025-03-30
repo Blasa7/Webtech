@@ -39,9 +39,14 @@ function generateForm(node) {
     input2.setAttribute('type','password');
     input2.setAttribute('name','password');
     input2.setAttribute('required','true');
-    par3.setAttribute('class','button');
     button.setAttribute('value','login');
     button.setAttribute('type','submit');
+    form.className = 'credentials-form';
+    par1.className = 'credentials-p';
+    par2.className = 'credentials-p';
+    par3.className = 'credentials-p';
+    body.className = 'credentials-body';
+    
 
     label1.appendChild(document.createTextNode('username:'));
     label2.appendChild(document.createTextNode('password:'));
