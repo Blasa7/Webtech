@@ -6,6 +6,7 @@ import Database from 'better-sqlite3';
 import fs from 'fs'
 import multer from 'multer';
 import { initProfilePage } from './generatedPages/generateHTML.js';
+import * as lib from './public/js/lib.js'
 
 
 // run: 
@@ -19,81 +20,68 @@ var db = new Database(dbFile)
 
 // Create tables if the database did not exist previusly
 if (!exists) {
-    db.exec("PRAGMA foreign_keys = ON;") // Necessary to enable foreign keys.
+    db.exec(`PRAGMA foreign_keys = ON;`) // Necessary to enable foreign keys.
 
     // Create courses table.
-    const courses = db.prepare(
-        "CREATE TABLE courses (" +
-        "id INTEGER PRIMARY KEY," +
-        "title STRING NOT NULL," +
-        "description STRING," +
-        "teacher STRING" +
-        ")"
-    )
-    courses.run()
+    db.prepare(
+        `CREATE TABLE courses (
+        id INTEGER PRIMARY KEY,
+        title STRING NOT NULL,
+        description STRING,
+        teacher STRING
+    )`).run();
 
     // Create table for user courses.
-    const user_courses = db.prepare(
-        "CREATE TABLE student_courses(" +
-        "user_id INTEGER," +
-        "course_id INTEGER," +
-        "FOREIGN KEY (user_id) REFERENCES users(id)," +
-        "FOREIGN KEY (course_id) REFERENCES courses(id)" +
-        ")"
-    )
-    user_courses.run()
+    db.prepare(
+        `CREATE TABLE student_courses ( 
+        user_id INTEGER REFERENCES users(id),
+        course_id INTEGER REFERENCES courses(id)
+    )`).run();
 
     // Create users table.
-    const users = db.prepare( // Maybe split the passwords into their own table.
-        "CREATE TABLE users (" +
-        "id INTEGER PRIMARY KEY," +
-        "username STRING NOT NULL UNIQUE," +
-        "password STRING NOT NULL," +
-        "age INTEGER," +
-        "email STRING," +
-        "photo BLOB," +
-        "hobbies STRING," +
-        "program INTEGER," +
-        "FOREIGN KEY (program) REFERENCES programs(id)" +
-        ")"
-    );
-    users.run()
+    db.prepare(
+        `CREATE TABLE students (
+        user_id INTEGER REFERENCES users(id),
+        name STRING NOT NULL UNIQUE,
+        age INTEGER,
+        email STRING,
+        photo BLOB,
+        hobbies STRING,
+        program INTEGER REFERENCES programs(id)
+    )`).run();
 
-    // Create user_posts table.
-    const user_posts = db.prepare(
-        "CREATE TABLE user_posts (" +
-        "id INTEGER PRIMARY KEY," +
-        "user_id INTEGER NOT NULL," +
-        "title STRING NOT NULL," +
-        "text STRING NOT NULL," +
-        "posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
-        "FOREIGN KEY (user_id) REFERENCES users(id)" +
-        ")"
-    );
-    user_posts.run()
+
+    db.prepare(
+        `CREATE TABLE users (
+        id INTEGER PRIMARY KEY,
+        password STRING NOT NULL
+    )`).run();
+
+    // Create messages table containing all messages.
+    db.prepare(
+        `CREATE TABLE messages (
+        from_user_id INTEGER REFERENCES users(id),
+        to_user_id INTEGER REFERENCES users(id),
+        title STRING NOT NULL,
+        text STRING NOT NULL,
+        posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )`).run();
 
     // Create programs table.
-    const programs = db.prepare(
-        "CREATE TABLE programs (" +
-        "id INTEGER PRIMARY KEY," +
-        "title STRING NOT NULL," +
-        "description STRING" +
-        ")"
-    )
-    programs.run()
+    db.prepare(
+        `CREATE TABLE programs (
+        id INTEGER PRIMARY KEY,
+        title STRING NOT NULL,
+        description STRING
+    )`).run();
 
-    // Create friend table. With a foreign key in the users table.
-    const friends = db.prepare(
-        "CREATE TABLE friends (" +
-        "id INTEGER PRIMARY KEY," +
-        "from_user INTEGER NOT NULL," +
-        "to_user INTEGER NOT NULL," +
-        "status STRING NOT NULL," +
-        "FOREIGN KEY (from_user) REFERENCES users(id)," +
-        "FOREIGN KEY (to_user) REFERENCES users(id)" +
-        ")"
-    )
-    friends.run()
+    // Create friend table. With a foreign keys in the users table.
+    db.prepare(
+        `CREATE TABLE friends (
+        from_user INTEGER REFERENCES users(id),
+        to_user INTEGER REFERENCES users(id),
+        status STRING NOT NULL
+    )`).run();
 
     // Insert some dummy values
     const insertCourse1 = db.prepare(
@@ -160,10 +148,11 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    console.log(req.body);
     try {
-        addUser(req.body.username, req.body.password);
-    } catch {
+        register(req.body.username, req.body.password);
+    } catch (err) {
+        console.log('Failed to register user!');
+        console.log(err);
     }
     res.redirect('/register.html');
 });
@@ -171,18 +160,25 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
     try {
         // Check login credentials
-        let user = login(req.body.username, req.body.password);
-        user.courses = getUserCourses(user.id);
+        let userID = login(req.body.username, req.body.password);
 
-        // Update session
-        req.session.user = user; // Update session with current user login
-        req.session.save()
+        if (userID) {
+            req.session.userID = userID;
 
-        // Load profile page
-        res = loadProfile(req, res);
-    } catch {
+            req = updateSessionStudent(req)
+
+            // Load profile page
+            res = loadProfile(req, res);
+
+            console.log('User has logged in!');
+        } else {
+            res.redirect('/login.html');
+            console.log('Incorrect username/password combination!');
+        }
+    } catch (err) {
         res.redirect('/login.html');
-        console.log('Incorrect username or password')
+        console.log('Failed to log in!');
+        console.log(err)
     }
 });
 
@@ -192,22 +188,29 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
         let photo = req.file ? req.file.buffer : null;
 
         // Update database
-        let user = updateUser(req.session.user.id, body.username, body.password, body.age, body.email, body.hobbies, body.program);
-        let courses = updateStudentCourses(user.id, body.courses);
+        updateStudent(req.session.userID, body.username, body.age, body.email, body.hobbies, body.program);
+        updateStudentCourses(req.session.userID, body.courses);
 
         if (photo) {
-            updateUserPhoto(user.id, photo);
+            updateStudentPhoto(req.session.userID, photo);
         }
 
         // Update session
-        req.session.user = user;
-        req.session.user.courses = courses;
+        req = updateSessionStudent(req);
 
         // Load new page
         res = loadProfile(req, res);
     } catch (err) {
         console.log("Failed to update user profile!");
         console.log(err);
+    }
+});
+
+app.get('/course-overview', (req, res) => {
+    try {
+        res = loadCourseOverview(req, res);
+    } catch {
+        console.log("Failed to load course overview page!");
     }
 });
 
@@ -224,7 +227,7 @@ app.get('/profile', (req, res) => { // page generated with dom manipulation
 
 app.get('/student-courses', (req, res) => {
     try {
-        const courses = getUserCourses(req.session.user.id);
+        const courses = selectCourses(req.session.userID);
 
         res.send(courses);
     } catch {
@@ -234,7 +237,7 @@ app.get('/student-courses', (req, res) => {
 
 app.get('/student-program', (req, res) => {
     try {
-        const program = getUserProgram(req.session.user.id);
+        const program = selectProgram(req.session.userID);
 
         res.send(program);
     } catch {
@@ -244,7 +247,7 @@ app.get('/student-program', (req, res) => {
 
 app.get('/student-photo', (req, res) => {
     try {
-        const photo = getStudentPhoto(req.session.user.id);
+        const photo = selectPhoto(req.session.userID);
 
         res.send(photo);
     } catch {
@@ -256,38 +259,168 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
 
+// Utility
+function updateSessionStudent(req) {
+    // Parse everything into the right format.
+    let partialStudent = selectStudent(req.session.userID);
+    let partialProgram = selectProgram(req.session.userID);
+    let partialCourses = selectCourses(req.session.userID);
+
+    let program;
+
+    if (partialProgram) {
+        program = new lib.Program(partialProgram.title, partialProgram.description);
+    } else {
+        program = new lib.Program(undefined, undefined)
+    }
+
+    let courses = []
+    for (let i = 0; i < partialCourses.length; i++) {
+        let course = new lib.Course(
+            partialCourses[i].title,
+            partialCourses[i].description,
+            partialCourses[i].teacher
+        )
+
+        courses.push(course);
+    }
+
+    let student = new lib.Student(
+        partialStudent.name,
+        partialStudent.age,
+        partialStudent.email,
+        partialStudent.hobbies,
+        partialStudent.photo,
+        program,
+        courses
+    )
+
+    // Update session information.
+    req.session.student = student;
+
+    return req;
+}
+
 // Functions to load pages
 
 // Loads the user profile with the session information from req.
 function loadProfile(req, res) {
-    return res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() })
+    return res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
 }
 
-// Check username and password combination
+// Loads the course overview page with the session information from req.
+function loadCourseOverview(req, res) {
+    return res.render('course-overview.ejs', { userCourses: getUserCourses(req.session.user.id) });
+}
+
+function register(username, password) {
+    const db = new Database('app.db');
+
+    const exists = db.prepare(`
+        SELECT * FROM students
+        WHERE name = ?
+    `).get(username);
+
+    if (!exists) {
+        // Make new user id with password.
+        const info = db.prepare(`
+            INSERT INTO users (password)
+            VALUES (?)
+        `).run(password);
+
+        // Make student row
+        db.prepare(`
+            INSERT INTO students (name, user_id) 
+            VALUES (?, ?)
+        `).run(username, info.lastInsertRowid);
+    }
+
+    db.close();
+}
+
+// Check username and password combination and returns the user id if succesfull.
 function login(username, password) {
     const db = new Database('app.db');
-    const user = db.prepare('SELECT * FROM users WHERE username = ? AND password = ?').get(username, password);
-    console.log(`${username} logged in.`);
+
+    const user = db.prepare(
+        `SELECT user_id FROM 
+        students LEFT JOIN users ON students.user_id = users.id 
+        WHERE name = ? AND password = ?
+    `).get(username, password).user_id;
+
     db.close();
+
     return user;
 }
 
-function addUser(username, password) {
+
+
+// Returns all fields from the students table for the given user id.
+function selectStudent(userID) {
     const db = new Database('app.db');
-    const insertData = db.prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    insertData.run(username, password);
+
+    const user = db.prepare(`
+        SELECT * FROM students 
+        WHERE user_id = ?
+    `).get(userID);
+
     db.close();
-    console.log(`User ${username} added to the database.`)
+
+    return user;
 }
 
-function selectUser(username) {
+// Returns the student photo field for the given user id.
+function selectPhoto(userID) {
+    const db = new Database('app.db');
+
+    const photo = db.prepare(`
+        SELECT photo FROM students 
+        WHERE user_id = ?
+    `).get(userID).photo;
+
+    db.close();
+
+    return photo;
+}
+
+// Return the program for the given user id.
+function selectProgram(userID) {
+    const db = new Database('app.db');
+
+    const program = db.prepare(`
+        SELECT title, description FROM 
+        students LEFT JOIN programs ON students.program = programs.id
+        WHERE user_id = ?
+    `).get(userID);
+
+    db.close();
+
+    return program;
+}
+
+// Return all courses for the given user id.
+function selectCourses(userID) {
+    const db = new Database('app.db');
+
+    const courses = db.prepare(`
+        SELECT course_id, title, description, teacher FROM 
+        student_courses LEFT JOIN courses ON student_courses.course_id = courses.id
+        WHERE user_id = ?
+    `).all(userID);
+
+    db.close();
+
+    return courses;
+}
+
+/*function selectUser(username) {
     const db = new Database('app.db');
     const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
     db.close();
     return user;
-}
+}*/
 
-function updateUser(old_user_id, username, password, age, email, hobbies, program) {
+/*function updateUser(old_user_id, username, password, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
     const db = new Database('app.db');
@@ -299,32 +432,58 @@ function updateUser(old_user_id, username, password, age, email, hobbies, progra
     `).run(username, password, age, email, hobbies, program, old_user_id);
     db.close();
     return selectUser(username);
+}*/
+
+function updateStudent(userID, name, age, email, hobbies, program) {
+    program = program || null // Foreign key accepts null but not undefined
+
+    const db = new Database('app.db');
+
+    db.prepare(`
+        UPDATE students SET 
+        name = ?, age = ?, email = ?,
+        hobbies = ?, program = ?
+        WHERE user_id = ?
+    `).run(name, age, email, hobbies, program, userID);
+
+    db.close();
 }
 
 function updateStudentCourses(userID, courses) {
     const db = new Database('app.db');
+
     db.prepare(`
         DELETE FROM student_courses
         WHERE user_id = ?
-        `).run(userID);
+    `).run(userID);
 
     const insertStudentCourse = db.prepare(`
         INSERT INTO student_courses
         (user_id, course_id) VALUES (?, ?)
-        `);
+    `);
 
     if (courses) {
         Object.values(courses).forEach(value => {
             console.log(value)
             insertStudentCourse.run(userID, value)
-        })
+        });
     }
 
     db.close();
-
-    return getUserCourses(userID);
 }
 
+function updateStudentPhoto(userID, photo){
+    const db = new Database('app.db');
+
+    db.prepare(`
+        UPDATE students SET 
+        photo = ?
+        WHERE user_id = ?
+    `).run(photo, userID);
+
+    db.close();
+}
+/*
 function updateUserPhoto(userID, photo) {
     const db = new Database('app.db');
     db.prepare(`
@@ -333,42 +492,35 @@ function updateUserPhoto(userID, photo) {
     WHERE id = ?
     `).run(photo, userID);
     db.close();
-}
+}*/
 
-function getUserCourses(userID) {
-    const db = new Database('app.db');
-    const courses = db.prepare('SELECT course_id FROM student_courses WHERE user_id = ?').all(userID);
-    db.close();
-    return courses;
-}
 
-function getUserProgram(userID) {
-    const db = new Database('app.db');
-    const courses = db.prepare('SELECT program FROM users WHERE id = ?').get(userID);
-    db.close();
-    return courses;
-}
 
 function getAvailableCourses() {
     const db = new Database('app.db');
-    const courses = db.prepare('SELECT * FROM courses').all();
+
+    const courses = db.prepare(`
+        SELECT * FROM courses
+    `).all();
+
     db.close();
+
     return courses;
 }
 
 function getAvailablePrograms() {
     const db = new Database('app.db');
-    const courses = db.prepare('SELECT * FROM programs').all();
+
+    const courses = db.prepare(`
+        SELECT * FROM programs
+    `).all();
+
     db.close();
+
     return courses;
 }
 
-function getStudentPhoto(userID) {
-    const db = new Database('app.db');
-    const photo = db.prepare('SELECT photo FROM users WHERE id = ?').get(userID).photo;
-    db.close();
-    return photo;
-}
+
 
 
 

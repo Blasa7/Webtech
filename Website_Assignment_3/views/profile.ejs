@@ -1,66 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Login</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="../js/profile.js" defer></script>
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="../js/profile.js" defer></script>
+</head>
 
-    <body>
-        <header>
-            <h1>Your profile</h1>
-        </header>
-        <main>
-            <img id="profile-photo" src="" alt="Profile Photo" style="width: 100px;height: 100px;"> <!-- Remove style and move to css -->
+<body>
+    <header>
+        <h1>Your profile</h1>
+    </header>
+    <main>
+        <img id="profile-photo" src="" alt="Profile Photo" style="width: 100px;height: 100px;">
+        <!-- Remove style and move to css -->
 
-            <form action="/update-profile" method="post" enctype="multipart/form-data">
-                <label for="username">Username</label><br>
-                <input type="text" id="username" name="username"
-                    value=<%=user.username%>><br>
-                <label for="password">Password</label><br>
-                <input type="text" id="password" name="password"
-                    value=<%=user.password%>><br>
-                <label for="age">Age</label><br>
-                <input type="number" id="age" name="age"
-                    value=<%=user.age%>><br>
-                <label for="email">Email</label><br>
-                <input type="email" id="email" name="email"
-                    value=<%=user.email%>><br>
-                <label for="photo">Photo</label><br>
-                <input type="file" id="photo" name="photo"
-                    value=<%=null%>><br>
-                <label for="hobbies">Hobbies</label><br>
-                <input type="text" id="hobbies" name="hobbies"
-                    value=<%=user.hobbies%>><br>
-                <label for="program">Program</label><br>
-                <select id="program" name="program"><br>
-                    <% for (let i = 0; i < availablePrograms.length; i++) { %>
-                        <option class="profile-form__dropdown-option" value=<%=availablePrograms[i].id%>><%=availablePrograms[i].title%></option>
-                        <% } %>
-                </select>
-                <section>
-                    <fieldset>
-                        <legend>Courses</legend>
-                        <% for (let i=0; i < availableCourses.length; i++) { %>
-                        <label
-                            for=<%=availableCourses[i].title%>><%=availableCourses[i].title
-                            + ":" %></label>
-                        <input class="profile-form__input--checkbox"
-                            type="checkbox" id=<%=availableCourses[i].title%>
-                        name="courses[<%=availableCourses[i].title%>]"
-                        value=<%=availableCourses[i].id%>
-                        >
-                        <% } %>
-                    </fieldset>
-                    <input type="submit" value="Update!">
-                </form>
-            </main>
-            <footer>
+        <form action="/update-profile" method="post" enctype="multipart/form-data">
+            <label for="username">Username</label><br>
+            <input type="text" id="username" name="username" value=<%=student.name%>><br>
+            <label for="age">Age</label><br>
+            <input type="number" id="age" name="age" value=<%=student.age%>><br>
+            <label for="email">Email</label><br>
+            <input type="email" id="email" name="email" value=<%=student.email%>><br>
+            <label for="photo">Photo</label><br>
+            <input type="file" id="photo" name="photo" value=<%=null%>><br>
+            <label for="hobbies">Hobbies</label><br>
+            <input type="text" id="hobbies" name="hobbies" value=<%=student.hobbies%>><br>
+            <label for="program">Program</label><br>
+            <select id="program" name="program"><br>
+                <% for (let i=0; i < availablePrograms.length; i++) { %>
+                    <option class="profile-form__dropdown-option" value=<%=availablePrograms[i].id%>>
+                        <%=availablePrograms[i].title%>
+                    </option>
+                <% } %>
+            </select>
+            <fieldset>
+                <legend>Courses</legend>
+                <% for (let i=0; i < availableCourses.length; i++) { %>
+                    <label for=<%=availableCourses[i].title%>><%=availableCourses[i].title + ":" %></label>
+                    <input class="profile-form__input--checkbox" type="checkbox" id=<%=availableCourses[i].title%>
+                    name="courses[<%=availableCourses[i].title%>]" value=<%=availableCourses[i].id%>>
+                <% } %>
+            </fieldset>
+            <input type="submit" value="Update!">
+        </form>
+    </main>
+    <footer>
 
-            </footer>
-        </body>
+    </footer>
+</body>
 
-    </html>
+</html>
