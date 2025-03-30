@@ -168,7 +168,8 @@ app.post('/login', (req, res) => {
             req = updateSessionStudent(req)
 
             // Load profile page
-            res = loadProfile(req, res);
+            res.redirect('/profile');
+            //res = loadProfile(req, res);
 
             console.log('User has logged in!');
         } else {
@@ -199,22 +200,15 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
         req = updateSessionStudent(req);
 
         // Load new page
-        res = loadProfile(req, res);
+        res.redirect('profile');
+        //res = loadProfile(req, res);
     } catch (err) {
         console.log("Failed to update user profile!");
         console.log(err);
     }
 });
 
-app.get('/course-overview', (req, res) => {
-    try {
-        res = loadCourseOverview(req, res);
-    } catch {
-        console.log("Failed to load course overview page!");
-    }
-});
-
-app.get('/profile', (req, res) => { // page generated with dom manipulation
+/*app.get('/profile', (req, res) => { // page generated with dom manipulation
     let username = req.session.user.username;
     if (username !== undefined) {
         const html = initProfilePage(username);
@@ -223,7 +217,7 @@ app.get('/profile', (req, res) => { // page generated with dom manipulation
     else {
         res.redirect('/login');
     }
-});
+});*/
 
 app.get('/student-courses', (req, res) => {
     try {
@@ -304,14 +298,14 @@ function updateSessionStudent(req) {
 // Functions to load pages
 
 // Loads the user profile with the session information from req.
-function loadProfile(req, res) {
+app.get('/profile', (req, res) => {
     return res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
-}
+});
 
 // Loads the course overview page with the session information from req.
-function loadCourseOverview(req, res) {
-    return res.render('course-overview.ejs', { userCourses: getUserCourses(req.session.user.id) });
-}
+app.get('/course-overview', (req, res) => {
+    return res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
+})
 
 function register(username, password) {
     const db = new Database('app.db');
@@ -413,27 +407,6 @@ function selectCourses(userID) {
     return courses;
 }
 
-/*function selectUser(username) {
-    const db = new Database('app.db');
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    db.close();
-    return user;
-}*/
-
-/*function updateUser(old_user_id, username, password, age, email, hobbies, program) {
-    program = program || null // Foreign key accepts null but not undefined
-
-    const db = new Database('app.db');
-    db.prepare(`
-    UPDATE users SET 
-    username = ?, password = ?, age = ?, email = ?,
-    hobbies = ?, program = ?
-    WHERE id = ?
-    `).run(username, password, age, email, hobbies, program, old_user_id);
-    db.close();
-    return selectUser(username);
-}*/
-
 function updateStudent(userID, name, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
@@ -472,7 +445,7 @@ function updateStudentCourses(userID, courses) {
     db.close();
 }
 
-function updateStudentPhoto(userID, photo){
+function updateStudentPhoto(userID, photo) {
     const db = new Database('app.db');
 
     db.prepare(`
@@ -483,18 +456,6 @@ function updateStudentPhoto(userID, photo){
 
     db.close();
 }
-/*
-function updateUserPhoto(userID, photo) {
-    const db = new Database('app.db');
-    db.prepare(`
-    UPDATE users SET 
-    photo = ?
-    WHERE id = ?
-    `).run(photo, userID);
-    db.close();
-}*/
-
-
 
 function getAvailableCourses() {
     const db = new Database('app.db');

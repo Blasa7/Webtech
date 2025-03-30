@@ -40,4 +40,51 @@ class Course {
     }
 }
 
-export {Student, Program, Course}
+// Some template html that is shared between pages.
+function makeHeader(headerElement, title) {
+    headerElement.className = "header";
+
+    const headerTitle = createElemWithText("h1", title);
+    headerTitle.className = "header__title";
+    headerElement.appendChild(headerTitle);
+}
+
+function makeNav(navElement) {
+    navElement.class = 'nav';
+
+    const list = document.createElement("ul");
+    list.class = 'nav__list';
+    navElement.appendChild(list);
+
+    let navBar = [
+        ["Profile", "/profile"], 
+        ["Course Overview", "/course-overview"], 
+    ];
+
+    for (let i = 0; i < navBar.length; i++) {
+        const listNode = document.createElement("li");
+        listNode.class = 'nav__item';
+        list.appendChild(listNode);
+
+        const link = createElemWithText("a", navBar[i][0]);
+        link.class = 'nav__link';
+        link.setAttribute("href", navBar[i][1]);
+        listNode.appendChild(link);
+    }
+}
+
+function makeFooter(footerElement) {
+
+}
+
+// Creates a element with the given tag and text contents
+function createElemWithText(tagName, content) {
+    let elem = document.createElement(tagName);
+    let text = document.createTextNode(content);
+
+    elem.appendChild(text);
+
+    return elem;
+}
+
+export { Student, Program, Course, makeHeader, makeNav, makeFooter }

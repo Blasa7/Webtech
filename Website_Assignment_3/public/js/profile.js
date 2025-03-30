@@ -1,3 +1,9 @@
+import * as lib from './lib.js'
+// Load header nav and footer from lib.
+lib.makeHeader(document.getElementById('header'), 'Your Profile');
+lib.makeNav(document.getElementById('nav'));
+lib.makeFooter(document.getElementById('footer'));
+
 // Load initial checkbox values.
 const reqCourses = new XMLHttpRequest();
 reqCourses.onload = () => {
