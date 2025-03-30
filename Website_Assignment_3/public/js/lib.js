@@ -41,20 +41,27 @@ class Course {
 }
 
 // Some template html that is shared between pages.
-function makeHeader(headerElement, title) {
-    headerElement.className = "header";
+function makeHeader(title) {
+    const header = document.getElementById('header');
+    header.className = "header";
 
     const headerTitle = createElemWithText("h1", title);
-    headerTitle.className = "header__title";
-    headerElement.appendChild(headerTitle);
+    headerTitle.class = "header__title";
+    header.appendChild(headerTitle);
+
+    const nav = document.createElement('nav');
+    nav.id = 'nav';
+    header.appendChild(nav);
+    makeNav();
 }
 
-function makeNav(navElement) {
-    navElement.class = 'nav';
+function makeNav() {
+    const nav = document.getElementById('nav');
+    nav.className = 'nav';
 
     const list = document.createElement("ul");
-    list.class = 'nav__list';
-    navElement.appendChild(list);
+    list.className = 'nav__list';
+    nav.appendChild(list);
 
     let navBar = [
         ["Profile", "/profile"], 
@@ -63,18 +70,18 @@ function makeNav(navElement) {
 
     for (let i = 0; i < navBar.length; i++) {
         const listNode = document.createElement("li");
-        listNode.class = 'nav__item';
+        listNode.className = 'nav__item';
         list.appendChild(listNode);
 
         const link = createElemWithText("a", navBar[i][0]);
-        link.class = 'nav__link';
+        link.className = 'nav__link';
         link.setAttribute("href", navBar[i][1]);
         listNode.appendChild(link);
     }
 }
 
-function makeFooter(footerElement) {
-
+function makeFooter() {
+    const footer = document.getElementById('footer')
 }
 
 // Creates a element with the given tag and text contents

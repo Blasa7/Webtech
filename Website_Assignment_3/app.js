@@ -299,12 +299,12 @@ function updateSessionStudent(req) {
 
 // Loads the user profile with the session information from req.
 app.get('/profile', (req, res) => {
-    return res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
+    res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
 });
 
 // Loads the course overview page with the session information from req.
 app.get('/course-overview', (req, res) => {
-    return res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
+    res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
 })
 
 function register(username, password) {

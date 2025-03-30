@@ -10,22 +10,22 @@
 </head>
 
 <body>
-    <header>
-        <h1>Your courses overview</h1>
+    <header id="header">
+
     </header>
-    <main>
+    <main class="main-content">
         <% for (let i = 0; i < userCourses.length; i++) { %>
             <section class="course-section">
-                <h2 class="course-title">userCourses[i].title</h2>
-                <p class="course-description">userCourses[i].description</p><br>
-                <p class="course-teacher">userCourses[i].teacher</p>>
+                <h2 class="course-title"><%=userCourses[i].title%></h2>
+                <p class="course-description"><%=userCourses[i].description%></p><br>
+                <p class="course-teacher"><%=userCourses[i].teacher%></p>
                 <section class="collapsible-student-overview">
 
                 </section>
             </section>
         <% } %>
     </main>
-    <footer>
+    <footer id="footer">
 
     </footer>
 </body>
