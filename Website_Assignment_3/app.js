@@ -138,12 +138,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/html')));
 
 // Http requests
-app.get('/', (req, res) => {
-    if (req.session.user) { // Session exists skip login
-        //res.render('profile.ejs', { user: req.session.user, availableCourses: getAvailableCourses() });
-        res = loadProfile(req, res);
-    } else { // Session does not exists go to login 
-        res.redirect('/login.html');
+// Middleware to intercept all requests to check whether the client is logged in.
+app.all('*', (req, res, next) => {
+    try {
+        // Dont redirect away from login or register.
+        if (req.path == '/login' || req.path == '/register') {
+            return next('route');
+        }
+
+        // If the session exists allow the request otherwise redirect to login page.
+        if (req.session.userID) {
+            next('route');
+        } else { // Session does not exists go to login
+            console.log('Client not logged in redirecting to login page...')
+            res.redirect('/login.html');
+        }
+    } catch (err) {
+        console.log('Failed to redirect user!');
+        console.log(err);
     }
 })
 
