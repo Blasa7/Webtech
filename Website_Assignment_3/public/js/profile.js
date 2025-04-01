@@ -46,7 +46,7 @@ reqPhoto.onload = () => {
         document.getElementById("profile-photo").src = photoURL;
     }
 }
-reqPhoto.open("GET", "student-photo");
+reqPhoto.open("GET", `student-photo`);
 reqPhoto.send();
 
 

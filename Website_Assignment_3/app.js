@@ -239,7 +239,7 @@ app.get('/student-courses', (req, res) => {
     } catch {
         console.log("Failed to retrieve student courses!");
     }
-})
+});
 
 app.get('/student-program', (req, res) => {
     try {
@@ -249,7 +249,7 @@ app.get('/student-program', (req, res) => {
     } catch {
         console.log("Failed to retrieve student program!");
     }
-})
+});
 
 app.get('/student-photo', (req, res) => {
     try {
@@ -259,11 +259,34 @@ app.get('/student-photo', (req, res) => {
     } catch {
         console.log("Failed to retrieve student photo!");
     }
-})
+});
+
+app.get('/student-photo/:studentID', (req, res) => {
+    try {
+        const photo = selectPhoto(req.params.studentID);
+
+        res.send(photo);
+    } catch (err) {
+        console.log("Failed to retrieve student photo!");
+        console.log(err);
+    }
+});
+
+app.get('/course-student-list/:courseID', (req, res) => {
+    try {
+        const students = selectCourseStudents(req.params.courseID);
+
+        res.send(students);
+    } catch (err) {
+        console.log('Failed to retrieve course students!');
+        console.log(err);
+    }
+
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
-})
+});
 
 // Utility
 function updateSessionStudent(req) {
@@ -395,7 +418,7 @@ function selectProgram(userID) {
 
     const program = db.prepare(`
         SELECT title, description FROM 
-        students LEFT JOIN programs ON students.program = programs.id
+        students INNER JOIN programs ON students.program = programs.id
         WHERE user_id = ?
     `).get(userID);
 
@@ -409,14 +432,28 @@ function selectCourses(userID) {
     const db = new Database('app.db');
 
     const courses = db.prepare(`
-        SELECT course_id, title, description, teacher FROM 
-        student_courses LEFT JOIN courses ON student_courses.course_id = courses.id
+        SELECT id, title, description, teacher FROM 
+        student_courses INNER JOIN courses ON student_courses.course_id = courses.id
         WHERE user_id = ?
     `).all(userID);
 
     db.close();
 
     return courses;
+}
+
+function selectCourseStudents(courseID) {
+    const db = new Database('app.db');
+
+    const students = db.prepare(`
+        SELECT students.* FROM students
+        INNER JOIN student_courses ON students.user_id = student_courses.user_id
+        WHERE course_id = ?
+    `).all(courseID);
+
+    db.close();
+
+    return students;
 }
 
 function updateStudent(userID, name, age, email, hobbies, program) {

@@ -15,13 +15,13 @@
     </header>
     <main class="main-content">
         <% for (let i = 0; i < userCourses.length; i++) { %>
-            <section class="course-section">
+            <section class="course-section" data-courseID="<%= userCourses[i].id%>">
                 <h2 class="course-title"><%=userCourses[i].title%></h2>
-                <p class="course-description"><%=userCourses[i].description%></p><br>
-                <p class="course-teacher"><%=userCourses[i].teacher%></p>
-                <section class="collapsible-student-overview">
-
-                </section>
+                <p class="course-description"><%=userCourses[i].description%></p>
+                <span class="course-teacher"><%=userCourses[i].teacher%></span>
+                <ul class="collapsible-student-overview">
+                    
+                </ul>
             </section>
         <% } %>
     </main>
