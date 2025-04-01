@@ -30,7 +30,7 @@ reqProgram.onload = () => {
         }
     }
 }
-reqProgram.open("GET", "student-program");
+reqProgram.open("GET", "student-program-id");
 reqProgram.send();
 
 

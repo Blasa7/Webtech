@@ -241,13 +241,14 @@ app.get('/student-courses', (req, res) => {
     }
 });
 
-app.get('/student-program', (req, res) => {
+app.get('/student-program-id', (req, res) => {
     try {
-        const program = selectProgram(req.session.userID);
+        const programID = selectProgramID(req.session.userID);
 
-        res.send(program);
-    } catch {
+        res.send(programID);
+    } catch (err) {
         console.log("Failed to retrieve student program!");
+        console.log(err);
     }
 });
 
@@ -425,6 +426,20 @@ function selectProgram(userID) {
     db.close();
 
     return program;
+}
+
+function selectProgramID(userID){
+    const db = new Database('app.db');
+
+    const programID = db.prepare(`
+        SELECT program FROM 
+        students
+        WHERE user_id = ?
+    `).get(userID);
+
+    db.close();
+
+    return programID;
 }
 
 // Return all courses for the given user id.
