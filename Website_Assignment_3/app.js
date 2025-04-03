@@ -119,7 +119,7 @@ app.set('view engine', 'ejs');
 app.set("trust proxy", 1)
 app.use(session({
     secret: "1234", //TODO: Change
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     cookie: {
         secure: false,
@@ -188,10 +188,9 @@ app.post('/login', (req, res) => {
             res.redirect('/login.html');
             console.log('Incorrect username/password combination!');
         }
-    } catch (err) {
+    } catch {
         res.redirect('/login.html');
         console.log('Failed to log in!');
-        console.log(err)
     }
 });
 
