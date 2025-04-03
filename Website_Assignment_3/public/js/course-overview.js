@@ -51,6 +51,11 @@ for (const courseSection of courseSections) {
 
                     const nameText = document.createTextNode(student.name);
                     name.appendChild(nameText);
+
+                    const friendStatus = document.createElement('img');
+                    friendStatus.className = 'collapsible-student-overview__friend-status'
+                    friendStatus.src = 'images/send_friend_request.png';
+                    studentItem.appendChild(friendStatus);
                 }
             };
             req.open('GET', `/course-student-list/${courseSection.getAttribute('data-courseID')}`);
@@ -58,5 +63,11 @@ for (const courseSection of courseSections) {
         } else {
             studentOverview.replaceChildren();
         }
+    });
+
+    const studentOverview = courseSection.getElementsByClassName('collapsible-student-overview')[0];
+    studentOverview.addEventListener('click', (event) => {
+        // Stop foldout from collapsing when clicking on a student.
+        event.stopPropagation();
     });
 }
