@@ -52,10 +52,21 @@ for (const courseSection of courseSections) {
                     const nameText = document.createTextNode(student.name);
                     name.appendChild(nameText);
 
+
+                    // Send friend request button.
                     const friendStatus = document.createElement('img');
                     friendStatus.className = 'collapsible-student-overview__friend-status'
-                    friendStatus.src = 'images/send_friend_request.png';
+                    friendStatus.src = `friend-status-icon/${student.user_id}`; //'images/send_friend_request.png';
                     studentItem.appendChild(friendStatus);
+                    friendStatus.addEventListener('click', () => {
+                        const reqFriend = new XMLHttpRequest();
+                        reqFriend.onload = () => {
+                            const url = `friend-status-icon/${student.user_id}`;
+                            friendStatus.src = url;
+                        }
+                        reqFriend.open('POST', `send-friend-request/${student.user_id}`);
+                        reqFriend.send();
+                    });
                 }
             };
             req.open('GET', `/course-student-list/${courseSection.getAttribute('data-courseID')}`);

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import session from 'express-session';
 import Database from 'better-sqlite3';
-import fs from 'fs'
+import fs, { stat } from 'fs'
 import multer from 'multer';
 import { initProfilePage } from './generatedPages/generateHTML.js';
 import * as lib from './public/js/lib.js'
@@ -219,6 +219,34 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
     }
 });
 
+app.post('/send-friend-request/:targetID', (req, res) => {
+    try {
+        // Do allow users to befriend themselves.
+        if (req.params.targetID == req.session.userID) {
+            return;
+        }
+
+        const status = selectFriendStatus(req.session.userID, req.params.targetID);
+
+        // If the status is not pending or accepted create a new friend request.
+        if (status == 'NONE') {
+            const incoming = selectFriendStatus(req.params.targetID, req.session.userID);
+            
+            // If the target has already sent a request to the current user then befriend them otherwise send a request.
+            if (incoming != 'NONE') {
+                updateFriendRequest(req.session.userID, req.params.targetID, 'ACCEPTED');
+            } else {
+                updateFriendRequest(req.session.userID, req.params.targetID, 'PENDING');
+            }
+        }
+
+        return res.redirect(`friend-status-icon/${req.params.targetID}`);
+    } catch (err){
+        console.log('Failed to send friend request!');
+        console.log(err);
+    }
+});
+
 /*app.get('/profile', (req, res) => { // page generated with dom manipulation
     let username = req.session.user.username;
     if (username !== undefined) {
@@ -281,7 +309,27 @@ app.get('/course-student-list/:courseID', (req, res) => {
         console.log('Failed to retrieve course students!');
         console.log(err);
     }
+});
 
+app.get('/friend-status-icon/:targetID', (req, res) => {
+    try {
+        if (req.params.targetID == req.session.userID) {
+            return res.redirect('/images/blank.png');
+        }
+
+        const status = selectFriendStatus(req.session.userID, req.params.targetID);
+
+        switch (status){
+            case 'PENDING':
+                return res.redirect('/images/pending_friend_request.png');
+            case 'ACCEPTED':
+                return res.redirect('/images/remove_friend.png')
+            default:
+                return res.redirect('/images/send_friend_request.png');
+        }
+    } catch {
+        console.log('Failed to retrieve friend status!');
+    }
 });
 
 app.listen(port, () => {
@@ -427,7 +475,7 @@ function selectProgram(userID) {
     return program;
 }
 
-function selectProgramID(userID){
+function selectProgramID(userID) {
     const db = new Database('app.db');
 
     const programID = db.prepare(`
@@ -468,6 +516,23 @@ function selectCourseStudents(courseID) {
     db.close();
 
     return students;
+}
+
+function selectFriendStatus(fromUserID, toUserId) {
+    const db = new Database('app.db');
+
+    const status = db.prepare(`
+        SELECT status FROM friends
+        WHERE from_user = ? AND to_user = ?
+    `).get(fromUserID, toUserId);
+
+    db.close();
+
+    if (status){
+        return status.status;
+    } else {
+        return 'NONE'
+    }
 }
 
 function updateStudent(userID, name, age, email, hobbies, program) {
@@ -516,6 +581,18 @@ function updateStudentPhoto(userID, photo) {
         photo = ?
         WHERE user_id = ?
     `).run(photo, userID);
+
+    db.close();
+}
+
+function updateFriendRequest(fromUserID, toUserId, status) {
+    const db = new Database('app.db');
+
+    db.prepare(`
+        INSERT OR REPLACE INTO friends
+        (from_user, to_user, status) 
+        VALUES (?, ?, ?)
+    `).run(fromUserID, toUserId, status);
 
     db.close();
 }
