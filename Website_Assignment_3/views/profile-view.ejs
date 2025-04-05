@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Profile</title>
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../js/profile-view.js" defer></script>
+</head>
+
+<body>
+    <header id="header">
+
+    </header>
+    <main class="main-content">
+        <section id="student-profile" data-userID=<%=userID%>>
+            <img id="profile-photo" src="" alt="Profile Photo">
+
+            <h2>Username</h2>
+            <p><%=student.name%></p>
+            <h2>Age</h2>
+            <% if (student.age) { %>
+                <%=student.age%>
+            <% } else { %>
+                Student has not shared his age.
+            <% } %>
+            <h2>Email</h2>
+            <% if (student.email) { %>
+                <%=student.email%>
+            <% } else { %>
+                Student has not shared his email.
+            <% } %>
+            <h2>Hobbies</h2>
+            <p>
+                <% if (student.hobbies) { %>
+                    <%=student.hobbies%>
+                <% } else { %>
+                    Student has not shared his hobbies.
+                <% } %>
+            </p>
+            <p></p>
+            <h2>Program</h2>
+            <p><%=student.program.title + ' - ' + student.program.description%></p>
+            <h2>Courses</h2>
+            <p>
+                <% for (let i=0; i < student.courses.length - 1; i++) { %>
+                    <%=student.courses[i].title + ', '%>
+                <% } %>
+            <%=student.courses[student.courses.length - 1].title + '.'%>
+            </p>
+        </section>
+    </main>
+    <footer id="footer">
+
+    </footer>
+</body>
+
+</html>

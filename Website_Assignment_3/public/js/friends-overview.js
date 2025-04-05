@@ -9,7 +9,7 @@ const friends = document.getElementsByClassName('friends-list__friend');
 for (const friend of friends) {
     const friendID = friend.getAttribute('data-userID');
     const photo = friend.getElementsByClassName('friends-list__friend__photo')[0];
-
+    
     // Get the photo from the server.
     const reqPhoto = new XMLHttpRequest();
     reqPhoto.responseType = 'blob';
@@ -25,4 +25,18 @@ for (const friend of friends) {
     }
     reqPhoto.open('GET', `student-photo/${friendID}`);
     reqPhoto.send();
+
+    const buttons = friend.getElementsByClassName("friends-list__friend__buttons")[0];
+
+    // Redirect to friends profile page button.
+    const openProfileButton = buttons.children[0];
+    openProfileButton.addEventListener('click', () => {
+        location.href = `profile-view/${friendID}`;
+    });
+
+    // Redirect to friends chat button.
+    const openChatButton = buttons.children[1];
+    openChatButton.addEventListener('click', () => {
+        location.href = '';
+    });
 }

@@ -19,9 +19,12 @@
             <ul class="friends-list">
                 <% for (let i = 0; i < userFriends.length; i++) { %>
                     <li class="friends-list__friend" data-userID=<%=userFriends[i].user_id%>>
-                        <img class="friends-list__friend__photo">
+                        <img class="friends-list__friend__photo" alt="Photo of your friend.">
                         <h3 class="friends-list__friend__name"><%=userFriends[i].name%></h3>
-                        <button class="friends-list__friend__chat-button">Open Chat</button>
+                        <section class="friends-list__friend__buttons">
+                            <button class="friends-list__friend__buttons__button">Open Profile</button>
+                            <button class="friends-list__friend__buttons__button">Open Chat</button>
+                        </section>
                     </li>
                 <% } %>
             </ul>

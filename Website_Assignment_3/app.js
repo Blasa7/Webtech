@@ -362,12 +362,11 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-// Utility
-function updateSessionStudent(req) {
+function parseStudent(userID){
     // Parse everything into the right format.
-    let partialStudent = selectStudent(req.session.userID);
-    let partialProgram = selectProgram(req.session.userID);
-    let partialCourses = selectCourses(req.session.userID);
+    let partialStudent = selectStudent(userID);
+    let partialProgram = selectProgram(userID);
+    let partialCourses = selectCourses(userID);
 
     let program;
 
@@ -398,6 +397,13 @@ function updateSessionStudent(req) {
         courses
     )
 
+    return student;
+}
+
+// Utility
+function updateSessionStudent(req) {
+    const student = parseStudent(req.session.userID);
+
     // Update session information.
     req.session.student = student;
 
@@ -408,17 +414,25 @@ function updateSessionStudent(req) {
 
 // Loads the user profile with the session information from req.
 app.get('/profile', (req, res) => {
-    res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
+    return res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
 });
 
 // Loads the course overview page with the session information from req.
 app.get('/course-overview', (req, res) => {
-    res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
+    return res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
 })
 
+// Loads the friend overview page with the session information from req.
 app.get('/friends-overview', (req, res) => {
-    res.render('friends-overview.ejs', { userFriends: selectUserFriends(req.session.userID) });
+    return res.render('friends-overview.ejs', { userFriends: selectUserFriends(req.session.userID) });
 });
+
+// Loads the profile view of the given user id.
+app.get('/profile-view/:targetID', (req, res) => {
+    return res.render('profile-view.ejs', { userID: req.params.targetID, student: parseStudent(req.params.targetID) });
+});
+
+
 
 function register(username, password) {
     const db = new Database('app.db');
