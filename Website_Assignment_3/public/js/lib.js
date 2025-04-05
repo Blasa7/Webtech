@@ -66,7 +66,7 @@ function makeNav() {
     let navBar = [
         ['Profile', '/profile'], 
         ['Course Overview', '/course-overview'],
-        ['Friends OVerview', '/friends-overview'] 
+        ['Friends Overview', '/friends-overview'] 
     ];
 
     for (let i = 0; i < navBar.length; i++) {
