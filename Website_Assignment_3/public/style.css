@@ -107,6 +107,7 @@ body {
     padding: 20px;
 }
 
+/* Course overview page. */
 .course-section {
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -171,6 +172,60 @@ body {
     font-weight: bold;
 }
 .collapsible-student-overview__friend-status {
+    width:fit-content;
+    height: 40px;
+    object-fit: cover;
+    margin-right: 10px;
+    margin-left: auto;
+    display: block;
+}
+
+/* Friends overview page. */
+.friends-section {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.friends-section__title {
+    background-color: #ddd;
+    padding: 10px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.friends-list {
+    padding: 0 10px;
+    background-color: #f9f9f9;
+    border-top: 1px solid #ccc;
+    transition: max-height 0.3s linear, padding 0.3s linear;
+    overflow: hidden;
+}
+
+.friends-list__friend {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.friends-list__friend__photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.friends-list__friend__name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.friends-list__friend__chat-button {
     width:fit-content;
     height: 40px;
     object-fit: cover;

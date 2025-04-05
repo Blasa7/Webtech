@@ -80,7 +80,8 @@ if (!exists) {
         `CREATE TABLE friends (
         from_user INTEGER REFERENCES users(id),
         to_user INTEGER REFERENCES users(id),
-        status STRING
+        status STRING,
+        CONSTRAINT edge UNIQUE (from_user, to_user)
     )`).run();
 
     // Insert some dummy values
@@ -260,7 +261,7 @@ app.post('/cancel-friend-request/:targetID', (req, res) => {
         const status = selectFriendStatus(req.session.userID, req.params.targetID);
 
         // If there is a pending request cancel it.
-        if (status == 'PENDING'){
+        if (status == 'PENDING') {
             updateFriendRequest(req.session.userID, req.params.targetID, 'NONE');
         }
 
@@ -347,7 +348,7 @@ app.get('/friend-status/:targetID', (req, res) => {
         if (status == 'NONE') {
             const incoming = selectFriendStatus(req.params.targetID, req.session.userID);
 
-            if (incoming == 'PENDING'){
+            if (incoming == 'PENDING') {
                 return res.send('INCOMING');
             }
         }
@@ -414,6 +415,10 @@ app.get('/profile', (req, res) => {
 app.get('/course-overview', (req, res) => {
     res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
 })
+
+app.get('/friends-overview', (req, res) => {
+    res.render('friends-overview.ejs', { userFriends: selectUserFriends(req.session.userID) });
+});
 
 function register(username, password) {
     const db = new Database('app.db');
@@ -560,6 +565,23 @@ function selectFriendStatus(fromUserID, toUserId) {
     }
 }
 
+function selectUserFriends(userID) {
+    const db = new Database('app.db');
+
+    const friends = db.prepare(`
+        SELECT students.* FROM 
+        students INNER JOIN (
+            SELECT to_user FROM friends
+            WHERE from_user = ? AND status = 'ACCEPTED'
+        ) friend 
+        ON students.user_id = friend.to_user 
+    `).all(userID);
+
+    db.close();
+
+    return friends;
+}
+
 function updateStudent(userID, name, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
@@ -614,11 +636,16 @@ function updateFriendRequest(fromUserID, toUserId, status) {
     const db = new Database('app.db');
 
     db.prepare(`
+       INSERT OR IGNORE INTO friends
+       (from_user, to_user)
+       VALUES (?, ?) 
+    `).run(fromUserID, toUserId);
+    /*db.prepare(`
         INSERT OR REPLACE INTO friends
         (from_user, to_user) 
         VALUES (?, ?)
     `).run(fromUserID, toUserId);
-
+*/
     db.prepare(`
         UPDATE friends SET
         status = ?

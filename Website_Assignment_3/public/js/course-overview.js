@@ -116,6 +116,6 @@ function friendStatusToText(status){
         case 'ACCEPTED':
             return 'Accepted Friend Request';
         default:
-            return '';
+            return 'This is you!';
     }
 }
