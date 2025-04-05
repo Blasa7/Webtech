@@ -80,7 +80,7 @@ if (!exists) {
         `CREATE TABLE friends (
         from_user INTEGER REFERENCES users(id),
         to_user INTEGER REFERENCES users(id),
-        status STRING NOT NULL
+        status STRING
     )`).run();
 
     // Insert some dummy values
@@ -179,9 +179,10 @@ app.post('/login', (req, res) => {
 
             req = updateSessionStudent(req)
 
+            req.session.save();
+
             // Load profile page
             res.redirect('/profile');
-            //res = loadProfile(req, res);
 
             console.log('User has logged in!');
         } else {
@@ -221,7 +222,7 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
 
 app.post('/send-friend-request/:targetID', (req, res) => {
     try {
-        // Do allow users to befriend themselves.
+        // Dont allow users to befriend themselves.
         if (req.params.targetID == req.session.userID) {
             return;
         }
@@ -231,19 +232,42 @@ app.post('/send-friend-request/:targetID', (req, res) => {
         // If the status is not pending or accepted create a new friend request.
         if (status == 'NONE') {
             const incoming = selectFriendStatus(req.params.targetID, req.session.userID);
-            
+
             // If the target has already sent a request to the current user then befriend them otherwise send a request.
             if (incoming != 'NONE') {
                 updateFriendRequest(req.session.userID, req.params.targetID, 'ACCEPTED');
+                updateFriendRequest(req.params.targetID, req.session.userID, 'ACCEPTED');
             } else {
                 updateFriendRequest(req.session.userID, req.params.targetID, 'PENDING');
             }
         }
 
-        return res.redirect(`friend-status-icon/${req.params.targetID}`);
-    } catch (err){
+        // Redirect to retrieve status.
+        return res.redirect(`/friend-status/${req.params.targetID}`);
+    } catch (err) {
         console.log('Failed to send friend request!');
         console.log(err);
+    }
+});
+
+app.post('/cancel-friend-request/:targetID', (req, res) => {
+    try {
+        // Dont allow users to unfriend themselves.
+        if (req.params.targetID == req.session.userID) {
+            return;
+        }
+
+        const status = selectFriendStatus(req.session.userID, req.params.targetID);
+
+        // If there is a pending request cancel it.
+        if (status == 'PENDING'){
+            updateFriendRequest(req.session.userID, req.params.targetID, 'NONE');
+        }
+
+        // Redirect to retrieve status.
+        return res.redirect(`/friend-status/${req.params.targetID}`);
+    } catch {
+        console.log('Failed to cancel friend request!');
     }
 });
 
@@ -311,22 +335,21 @@ app.get('/course-student-list/:courseID', (req, res) => {
     }
 });
 
-app.get('/friend-status-icon/:targetID', (req, res) => {
+// Returns the friend status. Can be ; 'INVALID', 'NONE', 'PENDING', 'ACCEPTED'
+app.get('/friend-status/:targetID', (req, res) => {
     try {
         if (req.params.targetID == req.session.userID) {
-            return res.redirect('/images/blank.png');
+            return res.send('INVALID');
         }
 
         const status = selectFriendStatus(req.session.userID, req.params.targetID);
 
-        switch (status){
-            case 'PENDING':
-                return res.redirect('/images/pending_friend_request.png');
-            case 'ACCEPTED':
-                return res.redirect('/images/remove_friend.png')
-            default:
-                return res.redirect('/images/send_friend_request.png');
+        if (status) {
+            res.send(status);
+        } else {
+            res.send('NONE');
         }
+
     } catch {
         console.log('Failed to retrieve friend status!');
     }
@@ -528,7 +551,7 @@ function selectFriendStatus(fromUserID, toUserId) {
 
     db.close();
 
-    if (status){
+    if (status) {
         return status.status;
     } else {
         return 'NONE'
@@ -590,9 +613,15 @@ function updateFriendRequest(fromUserID, toUserId, status) {
 
     db.prepare(`
         INSERT OR REPLACE INTO friends
-        (from_user, to_user, status) 
-        VALUES (?, ?, ?)
-    `).run(fromUserID, toUserId, status);
+        (from_user, to_user) 
+        VALUES (?, ?)
+    `).run(fromUserID, toUserId);
+
+    db.prepare(`
+        UPDATE friends SET
+        status = ?
+        WHERE from_user = ? AND to_user = ?
+    `).run(status, fromUserID, toUserId);
 
     db.close();
 }

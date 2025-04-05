@@ -54,19 +54,42 @@ for (const courseSection of courseSections) {
 
 
                     // Send friend request button.
-                    const friendStatus = document.createElement('img');
-                    friendStatus.className = 'collapsible-student-overview__friend-status'
-                    friendStatus.src = `friend-status-icon/${student.user_id}`; //'images/send_friend_request.png';
+                    const friendStatus = document.createElement('button');
+                    friendStatus.className = 'collapsible-student-overview__friend-status';
+                    friendStatus.setAttribute('data-friendStatus', '');
+                    //friendStatus.src = `friend-status-icon/${student.user_id}`; //'images/send_friend_request.png';
                     studentItem.appendChild(friendStatus);
+
+                    const friendStatusText = document.createTextNode('');
+                    friendStatus.appendChild(friendStatusText);
+
+                    const reqStatus = new XMLHttpRequest();
+                    reqStatus.onload = () => {
+                        const status = reqStatus.responseText;
+                        friendStatusText.data = friendStatusToText(status);
+                        friendStatus.setAttribute('data-friendStatus', status);
+                    };
+                    reqStatus.open('GET', `friend-status/${student.user_id}`);
+                    reqStatus.send();
+
+
                     friendStatus.addEventListener('click', () => {
                         const reqFriend = new XMLHttpRequest();
                         reqFriend.onload = () => {
-                            const url = `friend-status-icon/${student.user_id}`;
-                            friendStatus.src = url;
+                            const status = reqFriend.responseText;
+                            friendStatusText.data = friendStatusToText(status);
+                            friendStatus.setAttribute('data-friendStatus', status);
                         }
-                        reqFriend.open('POST', `send-friend-request/${student.user_id}`);
+                        if (friendStatus.getAttribute('data-friendStatus') == 'PENDING'){
+                            // Cancel request.
+                            reqFriend.open('POST', `cancel-friend-request/${student.user_id}`);
+                        } else {
+                            // Make request.
+                            reqFriend.open('POST', `send-friend-request/${student.user_id}`);
+                        }
                         reqFriend.send();
                     });
+
                 }
             };
             req.open('GET', `/course-student-list/${courseSection.getAttribute('data-courseID')}`);
@@ -81,4 +104,17 @@ for (const courseSection of courseSections) {
         // Stop foldout from collapsing when clicking on a student.
         event.stopPropagation();
     });
+}
+
+function friendStatusToText(status){
+    switch (status){
+        case 'NONE':
+            return 'Send Friend Request';
+        case 'PENDING':
+            return 'Cancel Friend Request';
+        case 'ACCEPTED':
+            return 'Accepted Friend Request';
+        default:
+            return '';
+    }
 }

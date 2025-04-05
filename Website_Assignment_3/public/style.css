@@ -171,9 +171,8 @@ body {
     font-weight: bold;
 }
 .collapsible-student-overview__friend-status {
-    width: 40px;
+    width:fit-content;
     height: 40px;
-    border-radius: 50%;
     object-fit: cover;
     margin-right: 10px;
     margin-left: auto;
