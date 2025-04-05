@@ -335,7 +335,7 @@ app.get('/course-student-list/:courseID', (req, res) => {
     }
 });
 
-// Returns the friend status. Can be ; 'INVALID', 'NONE', 'PENDING', 'ACCEPTED'
+// Returns the friend status. Can be ; 'INVALID', 'NONE', 'INCOMING', 'PENDING', 'ACCEPTED'
 app.get('/friend-status/:targetID', (req, res) => {
     try {
         if (req.params.targetID == req.session.userID) {
@@ -344,12 +344,14 @@ app.get('/friend-status/:targetID', (req, res) => {
 
         const status = selectFriendStatus(req.session.userID, req.params.targetID);
 
-        if (status) {
-            res.send(status);
-        } else {
-            res.send('NONE');
-        }
+        if (status == 'NONE') {
+            const incoming = selectFriendStatus(req.params.targetID, req.session.userID);
 
+            if (incoming == 'PENDING'){
+                return res.send('INCOMING');
+            }
+        }
+        return res.send(status);
     } catch {
         console.log('Failed to retrieve friend status!');
     }

@@ -25,19 +25,18 @@ for (const courseSection of courseSections) {
 
                     const img = document.createElement('img');
                     img.className = 'collapsible-student-overview__photo';
-                    img.src = student.photo;
                     
                     // Get the photo from the server.
                     const reqPhoto = new XMLHttpRequest();
                     reqPhoto.responseType = 'blob';
                     reqPhoto.onload = () => {
                         const blob = reqPhoto.response;
-                    
-                        if (blob) {
+                        
+                        if (blob.size > 0) {
                             const photoURL = URL.createObjectURL(blob);
                             img.src = photoURL;
                         } else {
-                            img.src = 'image/image_not_found.jpg';
+                            img.src = 'images/image_not_found.jpg';
                         }
                     }
                     reqPhoto.open('GET', `student-photo/${student.user_id}`);
@@ -110,6 +109,8 @@ function friendStatusToText(status){
     switch (status){
         case 'NONE':
             return 'Send Friend Request';
+        case 'INCOMING':
+            return 'Accept Friend Request';
         case 'PENDING':
             return 'Cancel Friend Request';
         case 'ACCEPTED':
