@@ -9,6 +9,7 @@ import { initProfilePage } from './generatedPages/generateHTML.js';
 import * as lib from './public/js/lib.js'
 
 
+
 // run: 
 // npm install
 // npm run dev
@@ -62,8 +63,7 @@ if (!exists) {
         `CREATE TABLE messages (
         from_user_id INTEGER REFERENCES users(id),
         to_user_id INTEGER REFERENCES users(id),
-        title STRING NOT NULL,
-        text STRING NOT NULL,
+        text STRING,
         posted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )`).run();
 
@@ -127,6 +127,7 @@ app.use(session({
         httpOnly: true
     }
 }))
+app.use(express.json());
 
 // Multer for file upload
 const storage = multer.memoryStorage();
@@ -272,6 +273,15 @@ app.post('/cancel-friend-request/:targetID', (req, res) => {
     }
 });
 
+app.post('/send-message/:targetID', (req, res) => {
+    try {
+        insertMessage(req.session.userID, req.params.targetID, req.body.text);
+    } catch (err) {
+        console.log('Failed to send message!');
+        console.log(err);
+    }
+});
+
 /*app.get('/profile', (req, res) => { // page generated with dom manipulation
     let username = req.session.user.username;
     if (username !== undefined) {
@@ -362,7 +372,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
-function parseStudent(userID){
+function parseStudent(userID) {
     // Parse everything into the right format.
     let partialStudent = selectStudent(userID);
     let partialProgram = selectProgram(userID);
@@ -414,22 +424,44 @@ function updateSessionStudent(req) {
 
 // Loads the user profile with the session information from req.
 app.get('/profile', (req, res) => {
-    return res.render('profile.ejs', { student: req.session.student, availableCourses: getAvailableCourses(), availablePrograms: getAvailablePrograms() });
+    return res.render('profile.ejs', {
+        student: req.session.student,
+        availableCourses: getAvailableCourses(),
+        availablePrograms: getAvailablePrograms()
+    });
 });
 
 // Loads the course overview page with the session information from req.
 app.get('/course-overview', (req, res) => {
-    return res.render('course-overview.ejs', { userCourses: selectCourses(req.session.userID) });
+    return res.render('course-overview.ejs', {
+        userCourses: selectCourses(req.session.userID)
+    });
 })
 
 // Loads the friend overview page with the session information from req.
 app.get('/friends-overview', (req, res) => {
-    return res.render('friends-overview.ejs', { userFriends: selectUserFriends(req.session.userID) });
+    return res.render('friends-overview.ejs', {
+        userFriends: selectUserFriends(req.session.userID)
+    });
 });
 
 // Loads the profile view of the given user id.
 app.get('/profile-view/:targetID', (req, res) => {
-    return res.render('profile-view.ejs', { userID: req.params.targetID, student: parseStudent(req.params.targetID) });
+    return res.render('profile-view.ejs', {
+        userID: req.params.targetID,
+        student: parseStudent(req.params.targetID)
+    });
+});
+
+// Loads the chat page between the current user and the target user.
+app.get('/chat/:targetID', (req, res) => {
+    return res.render('chat.ejs', {
+        userID: req.session.userID,
+        toUserId: req.params.targetID,
+        fromName: req.session.student.name,
+        toName: selectName(req.params.targetID),
+        messages: selectMessages(req.session.userID, req.params.targetID)
+    });
 });
 
 
@@ -488,6 +520,20 @@ function selectStudent(userID) {
     db.close();
 
     return user;
+}
+
+// Returns the student name of the give user id.
+function selectName(userID) {
+    const db = new Database('app.db');
+
+    const name = db.prepare(`
+        SELECT name FROM students 
+        WHERE user_id = ?
+    `).get(userID).name;
+
+    db.close();
+
+    return name;
 }
 
 // Returns the student photo field for the given user id.
@@ -596,6 +642,23 @@ function selectUserFriends(userID) {
     return friends;
 }
 
+// Returns all messages between two user sorted from oldest to newest.
+function selectMessages(userID1, userID2) {
+    const db = new Database('app.db');
+
+    const messages = db.prepare(`
+        SELECT from_user_id, to_user_id, text, posted_at 
+        FROM messages
+        WHERE (from_user_id = $userID1 AND to_user_id = $userID2) 
+        OR (to_user_id = $userID1 AND from_user_id = $userID2)
+        ORDER BY posted_at ASC
+    `).all({ userID1: userID1, userID2: userID2 });
+
+    db.close();
+
+    return messages;
+}
+
 function updateStudent(userID, name, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
@@ -665,6 +728,17 @@ function updateFriendRequest(fromUserID, toUserId, status) {
         status = ?
         WHERE from_user = ? AND to_user = ?
     `).run(status, fromUserID, toUserId);
+
+    db.close();
+}
+
+function insertMessage(fromUserID, toUserID, textContent) {
+    const db = new Database('app.db');
+
+    db.prepare(`
+        INSERT INTO messages (from_user_id, to_user_id, text)
+        VALUES (?, ?, ?)
+    `).run(fromUserID, toUserID, textContent);
 
     db.close();
 }

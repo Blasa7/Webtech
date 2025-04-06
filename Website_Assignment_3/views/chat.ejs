@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Overview</title>
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../js/chat.js" defer></script>
+</head>
+
+<body>
+    <header id="header">
+
+    </header>
+    <main class="main-content">
+        <section class="page-section">
+            <h2 class="page-section__title">Your Chat With <%=toName%></h2>
+            <section class="messages">
+                <% for (let i = 0; i < messages.length; i++) { %>
+                    <% if (messages[i].from_user_id == userID) { %>
+                        <section class="outgoing-message">
+                            <h3 class="outgoing-message__sender-name"><%=fromName%></h3>
+                            <p class="outgoing-message__body"><%=messages[i].text%></p>
+                        </section>
+                    <% } else { %>
+                        <section class="incoming-message">
+                            <h3 class="incoming-message__sender-name"><%=toName%></h3>
+                            <p class="incoming-message__body"><%=messages[i].text%></p>
+                        </section>
+                    <% } %>
+                <% } %>
+            </section>
+
+            <section class="message-input-section" data-fromID=<%=userID%> data-toID=<%=toUserId%>>
+                <textarea name="message-input" class="message-input-section__text-input"></textarea>
+                <button class="message-input-section__send-button">
+                    Send!
+                </button>
+            </section>
+        </section>
+    </main>
+    <footer id="footer">
+
+    </footer>
+</body>
+
+</html>

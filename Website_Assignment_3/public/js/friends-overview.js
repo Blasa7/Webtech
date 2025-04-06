@@ -37,6 +37,6 @@ for (const friend of friends) {
     // Redirect to friends chat button.
     const openChatButton = buttons.children[1];
     openChatButton.addEventListener('click', () => {
-        location.href = '';
+        location.href = `chat/${friendID}`;
     });
 }
