@@ -215,7 +215,6 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
 
         // Load new page
         res.redirect('profile');
-        //res = loadProfile(req, res);
     } catch (err) {
         console.log("Failed to update user profile!");
         console.log(err);

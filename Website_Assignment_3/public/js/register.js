@@ -25,7 +25,7 @@ function generateForm(node) {
     par2.appendChild(label2);
     par2.appendChild(input2);
     const button = document.createElement('button');
-    const text = document.createTextNode('register');
+    const text = document.createTextNode('Register');
     button.appendChild(text);
     par3.appendChild(button);
 
@@ -47,12 +47,12 @@ function generateForm(node) {
     par3.className = 'credentials-p';
     body.className = 'credentials-body';
 
-    label1.appendChild(document.createTextNode('username:'));
-    label2.appendChild(document.createTextNode('password:'));
+    label1.appendChild(document.createTextNode('Username:'));
+    label2.appendChild(document.createTextNode('Password:'));
 
     const link = document.createElement('a');
     link.setAttribute('href','/login.html')
-    const linkText = document.createTextNode('login');
+    const linkText = document.createTextNode('Login');
     link.appendChild(linkText);
     form.appendChild(link);
 }

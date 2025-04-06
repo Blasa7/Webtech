@@ -1,20 +1,42 @@
-.credentials-body{
-    background-color: rgb(93, 114, 114);
+.credentials-body {
+    /*background-color: #f4f4f4;*/
+    background-image: linear-gradient(to bottom right, #91c2eb, #973f75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
 }
 
 .credentials-form {
-    background-color: bisque;
-    padding: 1em;
+    background-color: white;
+    padding: 2em;
     border-radius: 1em;
-    border: 2px solid black;
-    width: 500px;
-    height: 250px;
-    top: 50%;
-    bottom: 50%;
-    transform: translate(50%,50%);
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
 }
+
 .credentials-p {
-    padding: 0.5em;
+    padding: 0.5em 0;
+    color: #555;
+}
+
+/* Input and button styling */
+.credentials-form input {
+    width: 100%;
+    padding: 0.75em;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.credentials-form input:hover {
+    background-color: #dbe7f3;
 }
 
 * {
@@ -23,6 +45,7 @@
 
 html,
 body {
+    background-image: linear-gradient(to bottom right, #8e9eab, #eef2f3);
     margin: 0;
     padding: 0;
     height: 100%;
