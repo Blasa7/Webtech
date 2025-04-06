@@ -276,6 +276,8 @@ app.post('/cancel-friend-request/:targetID', (req, res) => {
 app.post('/send-message/:targetID', (req, res) => {
     try {
         insertMessage(req.session.userID, req.params.targetID, req.body.text);
+
+        res.send();
     } catch (err) {
         console.log('Failed to send message!');
         console.log(err);
