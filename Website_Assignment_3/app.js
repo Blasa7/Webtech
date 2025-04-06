@@ -8,7 +8,17 @@ import multer from 'multer';
 import { initProfilePage } from './generatedPages/generateHTML.js';
 import * as lib from './public/js/lib.js'
 
-
+/*TODO: 
+Must:
+1. Database invullen met 50 studenten, 10 cursusen en 3 programmas + friends + chat berichten.
+2. Logger toevoegen. (ik weet niet precies wat ze hier mee willen)
+3. Op de server van de uni hosten en runnen.
+4. Dubbel checken of de website tegen sql injecties en cross site scripting is beveiligd.
+5. Of meerdere gebruikers goed werkt. (Zowiezo niet op een pc want de sessie cookie is gedeeld vgm.)
+Kan:
+1. Code opsplitsen naar database bestand.
+2. Iets verbeteren.
+*/
 
 // run: 
 // npm install
