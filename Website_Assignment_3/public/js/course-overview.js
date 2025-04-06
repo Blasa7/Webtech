@@ -2,10 +2,11 @@ import * as lib from './lib.js'
 
 // Load header nav and footer from lib.
 lib.makeHeader('Your Course Overview');
-lib.makeFooter();
+lib.makeFooter('');
 
 const courseSections = document.getElementsByClassName('course-section');
 
+// Populate each course section with students.
 for (const courseSection of courseSections) {
     courseSection.addEventListener('click', () => {
         const active = courseSection.classList.toggle('active');

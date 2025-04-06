@@ -1,7 +1,7 @@
 import * as lib from './lib.js'
 // Load header nav and footer from lib.
 lib.makeHeader('Your Profile');
-lib.makeFooter();
+lib.makeFooter('');
 
 // Load initial checkbox values.
 const reqCourses = new XMLHttpRequest();

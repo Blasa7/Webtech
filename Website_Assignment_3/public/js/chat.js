@@ -2,7 +2,7 @@ import * as lib from './lib.js'
 
 // Load header nav and footer from lib.
 lib.makeHeader('Student Profile View');
-lib.makeFooter();
+lib.makeFooter('../');
 
 const messageInputSection = document.getElementsByClassName('message-input-section')[0];
 const fromUserID = messageInputSection.getAttribute('data-fromID');

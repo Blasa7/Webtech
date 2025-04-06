@@ -51,7 +51,7 @@ if (!exists) {
         program INTEGER REFERENCES programs(id)
     )`).run();
 
-
+    // Create user table containing user id and passwords.
     db.prepare(
         `CREATE TABLE users (
         id INTEGER PRIMARY KEY,
@@ -85,25 +85,17 @@ if (!exists) {
     )`).run();
 
     // Insert some dummy values
-    const insertCourse1 = db.prepare(
+    const insertCourse = db.prepare(
         "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
     );
-    insertCourse1.run("Webtech", "Vak over webtech.", "Sergey Sosnovsky");
+    insertCourse.run("Webtech", "Vak over webtech.", "Sergey Sosnovsky");
+    insertCourse.run("Computationele Intelligentie", "Vak over computationele intelligentie.", "Dirk Thierens");
 
-    const insertCourse2 = db.prepare(
-        "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
-    );
-    insertCourse2.run("Computationele Intelligentie", "Vak over computationele intelligentie.", "Dirk Thierens");
-
-    const insertProgram1 = db.prepare(
+    const insertProgram = db.prepare(
         "INSERT INTO programs (title, description) VALUES (?, ?)"
     );
-    insertProgram1.run("Informatica", "Programma over informatica.");
-
-    const insertProgram2 = db.prepare(
-        "INSERT INTO programs (title, description) VALUES (?, ?)"
-    );
-    insertProgram2.run("Informatiekunde", "Programma over informatiekunde.");
+    insertProgram.run("Informatica", "Programma over informatica.");
+    insertProgram.run("Informatiekunde", "Programma over informatiekunde.");
 };
 
 db.close()
@@ -161,6 +153,7 @@ app.all('*', (req, res, next) => {
     }
 })
 
+// Register user request.
 app.post('/register', (req, res) => {
     try {
         register(req.body.username, req.body.password);
@@ -171,6 +164,7 @@ app.post('/register', (req, res) => {
     res.redirect('/register.html');
 });
 
+// Login user request.
 app.post('/login', (req, res) => {
     try {
         // Check login credentials
@@ -197,6 +191,7 @@ app.post('/login', (req, res) => {
     }
 });
 
+// Update profile request.
 app.post('/update-profile', upload.single("photo"), (req, res) => {
     try {
         let body = JSON.parse(JSON.stringify(req.body))
@@ -221,6 +216,7 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
     }
 });
 
+// Send friend from the session user to the target user. If theres a incoming pending request then it is accepted.
 app.post('/send-friend-request/:targetID', (req, res) => {
     try {
         // Dont allow users to befriend themselves.
@@ -251,6 +247,7 @@ app.post('/send-friend-request/:targetID', (req, res) => {
     }
 });
 
+// Cancels a friend request if it is pending otherwise does nothing.
 app.post('/cancel-friend-request/:targetID', (req, res) => {
     try {
         // Dont allow users to unfriend themselves.
@@ -272,6 +269,7 @@ app.post('/cancel-friend-request/:targetID', (req, res) => {
     }
 });
 
+// Sends a message from the session user to the target user.
 app.post('/send-message/:targetID', (req, res) => {
     try {
         insertMessage(req.session.userID, req.params.targetID, req.body.text);
@@ -283,17 +281,7 @@ app.post('/send-message/:targetID', (req, res) => {
     }
 });
 
-/*app.get('/profile', (req, res) => { // page generated with dom manipulation
-    let username = req.session.user.username;
-    if (username !== undefined) {
-        const html = initProfilePage(username);
-        res.send(html);
-    }
-    else {
-        res.redirect('/login');
-    }
-});*/
-
+// Retrieve a list of courses for the session user.
 app.get('/student-courses', (req, res) => {
     try {
         const courses = selectCourses(req.session.userID);
@@ -304,6 +292,7 @@ app.get('/student-courses', (req, res) => {
     }
 });
 
+// Retrieve the program id for the session user.
 app.get('/student-program-id', (req, res) => {
     try {
         const programID = selectProgramID(req.session.userID);
@@ -315,6 +304,7 @@ app.get('/student-program-id', (req, res) => {
     }
 });
 
+// Retrieve the student photo for the session user.
 app.get('/student-photo', (req, res) => {
     try {
         const photo = selectPhoto(req.session.userID);
@@ -325,6 +315,7 @@ app.get('/student-photo', (req, res) => {
     }
 });
 
+// Retrieve the student photo for the given user id.
 app.get('/student-photo/:studentID', (req, res) => {
     try {
         const photo = selectPhoto(req.params.studentID);
@@ -336,6 +327,7 @@ app.get('/student-photo/:studentID', (req, res) => {
     }
 });
 
+// Retrieve a list of students for a particular course.
 app.get('/course-student-list/:courseID', (req, res) => {
     try {
         const students = selectCourseStudents(req.params.courseID);
@@ -373,6 +365,7 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
 
+// Parses a user id into a student class by retrieve the information from the db.
 function parseStudent(userID) {
     // Parse everything into the right format.
     let partialStudent = selectStudent(userID);
@@ -411,7 +404,7 @@ function parseStudent(userID) {
     return student;
 }
 
-// Utility
+// Updates the session student with data from the database.
 function updateSessionStudent(req) {
     const student = parseStudent(req.session.userID);
 
@@ -466,7 +459,7 @@ app.get('/chat/:targetID', (req, res) => {
 });
 
 
-
+// Registers a new user in the database with the given password. If the user already exists nothing is done.
 function register(username, password) {
     const db = new Database('app.db');
 
@@ -566,6 +559,7 @@ function selectProgram(userID) {
     return program;
 }
 
+// Return the program id for the given user id.
 function selectProgramID(userID) {
     const db = new Database('app.db');
 
@@ -595,6 +589,7 @@ function selectCourses(userID) {
     return courses;
 }
 
+// Returns a list of students that follow the given course id.
 function selectCourseStudents(courseID) {
     const db = new Database('app.db');
 
@@ -609,23 +604,25 @@ function selectCourseStudents(courseID) {
     return students;
 }
 
-function selectFriendStatus(fromUserID, toUserId) {
+// Return the current friend status from fromUserID to toUserID
+function selectFriendStatus(fromUserID, toUserID) {
     const db = new Database('app.db');
 
     const status = db.prepare(`
         SELECT status FROM friends
         WHERE from_user = ? AND to_user = ?
-    `).get(fromUserID, toUserId);
+    `).get(fromUserID, toUserID);
 
     db.close();
 
     if (status) {
         return status.status;
-    } else {
+    } else { // This way no records need to be stored if no requests have been made.
         return 'NONE'
     }
 }
 
+// Returns a list of friend for the given user id.
 function selectUserFriends(userID) {
     const db = new Database('app.db');
 
@@ -660,6 +657,7 @@ function selectMessages(userID1, userID2) {
     return messages;
 }
 
+// Updates the given user id with the passed parameters.
 function updateStudent(userID, name, age, email, hobbies, program) {
     program = program || null // Foreign key accepts null but not undefined
 
@@ -675,6 +673,7 @@ function updateStudent(userID, name, age, email, hobbies, program) {
     db.close();
 }
 
+// Updates the courses a student follows. It is separate from update student because courses are stored in a separate table.
 function updateStudentCourses(userID, courses) {
     const db = new Database('app.db');
 
@@ -698,6 +697,7 @@ function updateStudentCourses(userID, courses) {
     db.close();
 }
 
+// Updates the photo for the given student with the passed photo parameter.
 function updateStudentPhoto(userID, photo) {
     const db = new Database('app.db');
 
@@ -710,6 +710,7 @@ function updateStudentPhoto(userID, photo) {
     db.close();
 }
 
+// Inserts and updates the friend request with the passed status.
 function updateFriendRequest(fromUserID, toUserId, status) {
     const db = new Database('app.db');
 
@@ -718,12 +719,7 @@ function updateFriendRequest(fromUserID, toUserId, status) {
        (from_user, to_user)
        VALUES (?, ?) 
     `).run(fromUserID, toUserId);
-    /*db.prepare(`
-        INSERT OR REPLACE INTO friends
-        (from_user, to_user) 
-        VALUES (?, ?)
-    `).run(fromUserID, toUserId);
-*/
+
     db.prepare(`
         UPDATE friends SET
         status = ?
@@ -733,6 +729,7 @@ function updateFriendRequest(fromUserID, toUserId, status) {
     db.close();
 }
 
+// Creates a new message between the users with the passed content.
 function insertMessage(fromUserID, toUserID, textContent) {
     const db = new Database('app.db');
 
@@ -744,6 +741,7 @@ function insertMessage(fromUserID, toUserID, textContent) {
     db.close();
 }
 
+// Returns a list of all available courses.
 function getAvailableCourses() {
     const db = new Database('app.db');
 
@@ -756,6 +754,7 @@ function getAvailableCourses() {
     return courses;
 }
 
+// Returns a list of all available programs.
 function getAvailablePrograms() {
     const db = new Database('app.db');
 

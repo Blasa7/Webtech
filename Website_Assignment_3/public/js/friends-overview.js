@@ -2,10 +2,11 @@ import * as lib from './lib.js'
 
 // Load header nav and footer from lib.
 lib.makeHeader('Your Friends Overview');
-lib.makeFooter();
+lib.makeFooter('');
 
 const friends = document.getElementsByClassName('friends-list__friend');
 
+// Create a row for each friend.
 for (const friend of friends) {
     const friendID = friend.getAttribute('data-userID');
     const photo = friend.getElementsByClassName('friends-list__friend__photo')[0];

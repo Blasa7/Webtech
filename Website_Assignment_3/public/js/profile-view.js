@@ -2,7 +2,7 @@ import * as lib from './lib.js'
 
 // Load header nav and footer from lib.
 lib.makeHeader('Student Profile View');
-lib.makeFooter();
+lib.makeFooter('../');
 
 const userId = document.getElementById('student-profile').getAttribute('data-userID');
 const photo = document.getElementById('profile-photo');

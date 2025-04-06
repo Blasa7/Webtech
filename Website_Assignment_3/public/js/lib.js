@@ -1,3 +1,4 @@
+// Template for a student containing relevant information.
 class Student {
     name;
     age;
@@ -18,6 +19,7 @@ class Student {
     }
 }
 
+// Template for a program containing relevant information.
 class Program {
     title;
     description;
@@ -28,6 +30,7 @@ class Program {
     }
 }
 
+// Template for a course containing relevant information.
 class Course {
     title;
     description;
@@ -41,6 +44,8 @@ class Course {
 }
 
 // Some template html that is shared between pages.
+
+// Makes the header element with DOM manipulation.
 function makeHeader(title) {
     const header = document.getElementById('header');
     header.className = "header";
@@ -55,6 +60,7 @@ function makeHeader(title) {
     makeNav();
 }
 
+// Makes the navigation element with DOM manipulation.
 function makeNav() {
     const nav = document.getElementById('nav');
     nav.className = 'nav';
@@ -81,14 +87,25 @@ function makeNav() {
     }
 }
 
-function makeFooter() {
-    const footer = document.getElementById('footer')
+// Makes the foorter with DOM manipulation.
+function makeFooter(pathOffset) {
+    const footer = document.getElementById('footer');
+    footer.className = "footer";
+
+    const text = createElemWithText('p', 'Floris de Gruijter - Abracha Koens - Nicolas Penders')
+    footer.appendChild(text);
+
+    const logo = document.createElement('img');
+    logo.className = 'footer__img';
+    logo.alt = 'Utrecht Univesity logo';
+    logo.src = pathOffset + 'images/uu.png';
+    footer.appendChild(logo);
 }
 
 // Creates a element with the given tag and text contents
 function createElemWithText(tagName, content) {
     let elem = document.createElement(tagName);
-    let text = document.createTextNode(content);
+    let text = document.createTextNode(content)
 
     elem.appendChild(text);
 
