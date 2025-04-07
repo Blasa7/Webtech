@@ -92,7 +92,7 @@ for (const courseSection of courseSections) {
 
                 }
             };
-            req.open('GET', `/course-student-list/${courseSection.getAttribute('data-courseID')}`);
+            req.open('GET', `course-student-list/${courseSection.getAttribute('data-courseID')}`);
             req.send();
         } else {
             studentOverview.replaceChildren();

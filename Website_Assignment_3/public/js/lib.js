@@ -70,9 +70,9 @@ function makeNav() {
     nav.appendChild(list);
 
     let navBar = [
-        ['Profile', '/profile'], 
-        ['Course Overview', '/course-overview'],
-        ['Friends Overview', '/friends-overview'] 
+        ['Profile', '/group49/profile'], 
+        ['Course Overview', '/group49/course-overview'],
+        ['Friends Overview', '/group49/friends-overview'] 
     ];
 
     for (let i = 0; i < navBar.length; i++) {

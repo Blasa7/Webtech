@@ -6,7 +6,7 @@ generateForm(body);
 function generateForm(node) {
     const form = document.createElement('form');
     node.appendChild(form);
-    form.setAttribute('action','/register');
+    form.setAttribute('action','register');
     form.setAttribute('method','post');
 
     const par1 = document.createElement('p');

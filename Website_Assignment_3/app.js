@@ -7,6 +7,8 @@ import fs, { stat } from 'fs'
 import multer from 'multer';
 import { initProfilePage } from './generatedPages/generateHTML.js';
 import * as lib from './public/js/lib.js'
+import * as morgan from 'morgan'
+
 
 /*TODO: 
 Must:
@@ -113,7 +115,7 @@ db.close()
 // Express application
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const port = process.env.PORT;
+const port = 8049;//process.env.PORT;
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -130,6 +132,7 @@ app.use(session({
     }
 }))
 app.use(express.json());
+//app.use(morgan('combined'));
 
 // Multer for file upload
 const storage = multer.memoryStorage();
@@ -140,6 +143,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/html')));
+
+const root = '/group49'
 
 // Http requests
 // Middleware to intercept all requests to check whether the client is logged in.
@@ -155,7 +160,7 @@ app.all('*', (req, res, next) => {
             next('route');
         } else { // Session does not exists go to login
             console.log('Client not logged in redirecting to login page...')
-            res.redirect('/login.html');
+            res.redirect(root + '/login.html');
         }
     } catch (err) {
         console.log('Failed to redirect user!');
@@ -171,7 +176,7 @@ app.post('/register', (req, res) => {
         console.log('Failed to register user!');
         console.log(err);
     }
-    res.redirect('/register.html');
+    res.redirect(root + '/register.html');
 });
 
 // Login user request.
@@ -188,15 +193,15 @@ app.post('/login', (req, res) => {
             req.session.save();
 
             // Load profile page
-            res.redirect('/profile');
+            res.redirect(root + '/profile');
 
             console.log('User has logged in!');
         } else {
-            res.redirect('/login.html');
+            res.redirect(root + '/login.html');
             console.log('Incorrect username/password combination!');
         }
     } catch {
-        res.redirect('/login.html');
+        res.redirect(root + '/login.html');
         console.log('Failed to log in!');
     }
 });
@@ -219,7 +224,7 @@ app.post('/update-profile', upload.single("photo"), (req, res) => {
         req = updateSessionStudent(req);
 
         // Load new page
-        res.redirect('profile');
+        res.redirect(root + 'profile');
     } catch (err) {
         console.log("Failed to update user profile!");
         console.log(err);
@@ -250,7 +255,7 @@ app.post('/send-friend-request/:targetID', (req, res) => {
         }
 
         // Redirect to retrieve status.
-        return res.redirect(`/friend-status/${req.params.targetID}`);
+        return res.redirect(root + `/friend-status/${req.params.targetID}`);
     } catch (err) {
         console.log('Failed to send friend request!');
         console.log(err);
@@ -273,7 +278,7 @@ app.post('/cancel-friend-request/:targetID', (req, res) => {
         }
 
         // Redirect to retrieve status.
-        return res.redirect(`/friend-status/${req.params.targetID}`);
+        return res.redirect(root + `/friend-status/${req.params.targetID}`);
     } catch {
         console.log('Failed to cancel friend request!');
     }
