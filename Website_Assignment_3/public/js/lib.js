@@ -100,6 +100,18 @@ function makeFooter(pathOffset) {
     logo.alt = 'Utrecht Univesity logo';
     logo.src = pathOffset + 'images/uu.png';
     footer.appendChild(logo);
+
+    const logout = createElemWithText('button', 'Logout');
+    logout.className = 'footer__button';
+    logout.addEventListener('click', () => {
+        const req = new XMLHttpRequest()
+        req.onload = () => {
+            location.reload();
+        }
+        req.open('GET', 'logout');
+        req.send();
+    });
+    footer.appendChild(logout);
 }
 
 // Creates a element with the given tag and text contents

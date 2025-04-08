@@ -52,7 +52,7 @@ function generateForm(node) {
     label2.appendChild(document.createTextNode('Password:'));
 
     const link = document.createElement('a');
-    link.setAttribute('href','/register.html')
+    link.setAttribute('href','register.html')
     const linkText = document.createTextNode('Register');
     link.appendChild(linkText);
     form.appendChild(link);

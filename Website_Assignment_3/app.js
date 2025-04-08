@@ -3,22 +3,10 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import session from 'express-session';
 import Database from 'better-sqlite3';
-import fs, { stat } from 'fs'
+import fs from 'fs'
 import multer from 'multer';
-import { initProfilePage } from './generatedPages/generateHTML.js';
 import * as lib from './public/js/lib.js'
-import * as morgan from 'morgan'
-
-
-/*TODO: 
-Must:
-1. Database invullen met 50 studenten, 10 cursusen en 3 programmas + friends + chat berichten.
-4. Dubbel checken of de website tegen sql injecties en cross site scripting is beveiligd.
-5. Of meerdere gebruikers goed werkt. (Zowiezo niet op een pc want de sessie cookie is gedeeld vgm.)
-Kan:
-1. Code opsplitsen naar database bestand.
-2. Iets verbeteren.
-*/
+import morgan from 'morgan'
 
 // run: 
 // npm install
@@ -94,18 +82,178 @@ if (!exists) {
         CONSTRAINT edge UNIQUE (from_user, to_user)
     )`).run();
 
-    // Insert some dummy values
+    // Insert some dummy values,
     const insertCourse = db.prepare(
         "INSERT INTO courses (title, description, teacher) VALUES (?, ?, ?)"
     );
-    insertCourse.run("Webtech", "Vak over webtech.", "Sergey Sosnovsky");
-    insertCourse.run("Computationele Intelligentie", "Vak over computationele intelligentie.", "Dirk Thierens");
+    insertCourse.run('Webtech', 
+        `Het uitgangspunt van dit vak is het http protocol en alles wat daar bovenop gebouwd kan worden. Daarbij wordt ervaring opgedaan met relevante talen en technologieen, zoals (X)HTML, CSS, JavaScript, PHP en frameworks. Daarnaast wordt ingegaan op de historische context van het WWW en worden de concepten achter en allerlei technische aspecten van het WWW toegelicht. Ook dient de deelnemer zich het bijbehorende jargon eigen te maken.`, 
+        'Sergey Sosnovsky'
+    );
+    insertCourse.run('Computationele Intelligentie',
+        `Vak over computationele intelligentie.`,
+        'Dirk Thierens'
+    );
+    insertCourse.run('Data-analyse en retrieval', 
+        `In het eerste jaar heb je kennis gemaakt met database systemen. Daarmee kunnen grote hoeveelheden data efficient opgeslagen en bevraagd worden. In dit vak bouwen we hierop voort, waarbij twee belangrijke kwesties aan de orde komen.
+        De eerste vraag is hoe je omgaat met grote hoeveelheden data die niet de nauwkeurige recordstructuur hebben zoals in databases. De hoeveelheid ongestructureerde data (lees vooral: tekst) in de wereld is een veelvoud van de hoeveelheid gestructureerde data. Het zoeken in teksten vereist een heel andere aanpak, vooral omdat het aantal resultaten zeer groot kan zijn, waardoor ranking op basis van relevantie essentieel wordt. Deze tak van sport duiden we aan me Information Retrieval (IR). Hoewel deze discipline al vrij lang bestaat, is de relevantie in de laatste jaren toegenomen door de behoefte aan zoekmachines op het web.
+        We zullen kennis maken met basisbegrippen uit de IR: precision, recall, boolean search, indexering en posting lists, term weighting, vector-space-model en relevance feedback. Verder zullen we in detail kijken naar het PageRank-algoritme van Google.
+        Bij dit gedeelte hoort een practicumopgave waarbij we technieken uit de IR zullen toepassen bij het verwerken van queries op relationele databases, met als probleem dat het aantal resultaten of te groot, of te klein is.
+        De tweede vraag is hoe we interessante patronen en modellen uit deze data kunnen extraheren. Dit is het vakgebied van de data mining/machine learning. Ook hier zullen we het accent leggen op de analyse van ongestructureerde data (lees wederom: tekst), zoals het gebruik van data mining voor documentclassificatie en - clustering, alsmede voor het ranken van documenten op basis van hun relevantie voor een bepaalde query. Het begrip "document" moet je hier ruim opvatten: het kan bijvoorbeeld ook over webpagina's, e-mail berichten (spam of geen spam?), postings naar een nieuwsgroep of zelfs tweets gaan.
+        Technieken die hierbij aan de orde komen zijn o.a.: naive Bayes classificatie, nearest neighbour, support vector machines, hierarchisch clusteren en partitioneringsmethoden zoals k-means clustering.
+        Bij dit gedeelte hoort een practicumopgave waarbij we de in het college behandelde data-analyse technieken zullen toepassen op problemen zoals hierboven aangeduid. Hierbij zullen we gebruik maken van het data-analyse systeem R.`, 
+        'Hans Philippi');
+    insertCourse.run('Optimalisering en complexiteit',
+        `Dit is een vak uit de 'algoritmiek' hoek, waarbij het er niet omgaat om een algoritme zo snel mogelijk te maken (al kun je je daar wel op uitleven bij de practicumopdracht); de nadruk ligt hier op het bedenken van een goed algoritme. Om een concreet voorbeeld te nemen: stel dat je een rij getallen moet sorteren op grootte. Een simpel algoritme (uit de steentijd) zou zijn het omwisselen van twee naast elkaar staande getallen die niet in de goede volgorde staan. Dit duurt lang, maar met een beetje handigheid in software engineering kun je het enorm versnellen, zodat je in het tijdperk van de Flintstones komt: het leven is comfortabel, maar het blijft de steentijd. De volgende stap voorwaarts is het vinden van een goed algoritme, zoals Quicksort; je kunt stellen dat je met een beetje normale implementatie dan al in de 20ste eeuw bent beland. Tot slot kun je natuurlijk nog het algoritme versnellen door een goede implementatie te kiezen, zodat je uiteindelijk in de 21ste eeuw terecht bent gekomen. Uiteraard kun je erover twisten wat nu belangrijker is: implementatie of algoritme, maar de top wordt geleverd door van beide het beste te kiezen.`,
+        'Han Hoogeveen'
+    );
+    insertCourse.run('Talen en Compilers',
+        `Many programs take a sequence of symbols as input. These sequences almost always have some structure. Examples of such sequences of symbols are: programs in any programming language; a packet of information sent over the Internet; or information written into a file by a program (with the intention of that information being later re-read).
+        The structure of those sequences is described with the help of grammars (grammatica's). From these descriptions one can automatically generate programs that recognize the corresponding structure, known as parsers (ontleders). This process of recognition is an important component of many programs, for example, a translator from one data type (say, a source code file) into another (the internal structures used by the compiler). The description of the process of translation makes use of a grammar formalism. By using some specific classes of grammars, we can not only express the structure of the sequence, but also ensure that the structure is easy to recognize; for example, that it can be recognized in linear time.`,
+        'David van Balen'
+    );
+    insertCourse.run('Beeldverwerking',
+        `Image Processing provides basic knowledge and skills for the analysis and processing of digital images. We discuss fundamental and core techniques such as filters, edges and colors. We also treat advanced topics including corner detection, automatic thresholding, geometric operations and scale-invariant feature transforms. The course will be in English. The assignments are mandatory and require C# skills.`,
+        'Itir Önal Ertuğrul'
+    )
+    insertCourse.run('Security',
+        `Deze cursus bestaat ruwweg uit drie delen.
+        Het eerste deel behandelt symmetrische cryptografie, zoals AES, en DES, Rainbow en hash Tables en A5 stroomversleuteling.
+        Het tweede deel behandelt asymmetrische cryptografie. Deze cryptografie is gebaseerd op getalberekeningen aan de hand van getaltheoretische concepten die worden uitgelegd aan de hand van encryptiealgoritmen zoals RSA, Elgamal, en digitale handtekeningen.
+        Het derde deel bespreekt recente ontwikkelingen in de cyper security zoals de impact van quantum computing, Denial of service attacks en de werking van cryptomunten.`,
+        'Gerard Tel'
+    );
+    insertCourse.run('Driedimensionaal modelleren',
+        `3D modelleren gaat over het bouwen en representeren van objecten in de ruimte. Deze modellen kunnen gebaseerd zijn op ingewonnen data (laser scanning), op handgefabriceerde modellen in een modelleerprogramma, of op procdures zoals L-systemen. The voornaamste motivatie voor de constructie van deze 3D modellen is CAD/CAM, de filmindustrie, de gamesindustrie, de geneeskunde, de architectuur, animatie, robotica en fysische simulaties. Een model kan gevisualiseerd of op een andere manier gebruikt worden. 3D modelleren gebruikt allerlei technieken om om te gaan met krommen, grote point clouds en gestructureerde meshes. Aspecten als continuiteit, efficientie en correctheid zijn ook belangrijk.`,
+        'Maarten Löffler'
+    );
+    insertCourse.run('Software Testing en Verificatie',
+        `Testing is noodzakelijk om te garanderen dat onze software betrouwbaar is. Echter, software wordt steeds complexer. Testing wordt ook erg duur, omdat er te veel mogelijke executies zijn die getest moeten worden. We zouden dus keuzes moeten maken. In dit vak gaan we een aantal kern concepten, theorieën en technieken leren, zoals partitie-gebaseerd of control-flow-gebaseerd, om testing als een doelgericht en systematisch proces te beschrijven en uit te voeren. Ook zal er aandacht gegeven worden aan het testen van computer games. In sommige toepassingsgebieden is het echter belangrijk om het risico van fouten zo min mogelijk te houden (denk aan de elektronica van je autos). We gaan dus ook een programmeerlogica leren, waarmee we een programma correct kunnen bewijzen, zonder dat wij het programma hoeven te testen. De methode is volledig: een correct aangetoond programma voldoet echt aan zijn specificatie.`,
+        'Wishnu Prasetya'
+    );
+    insertCourse.run('Algoritmiek',
+        `In many practical applications, the speed of software is very important. Often this means that, besides fast computers and smart compilers, we need efficient algorithms. To design and develop such efficient algorithms, you will study several techniques and topics in Algoritmiek.
+        The course emphasizes both fundamental aspects (running time analysis and correctness proofs) and practical aspects (implementation challenges) of algorithmics. The lectures provide a solid foundation to this. You will study time analysis and proofs in the tutorial sessions, while you can work on implementation challenges in the practicals.`,
+        'Erik Jan van Leeuwen'
+    );
 
     const insertProgram = db.prepare(
         "INSERT INTO programs (title, description) VALUES (?, ?)"
     );
-    insertProgram.run("Informatica", "Programma over informatica.");
-    insertProgram.run("Informatiekunde", "Programma over informatiekunde.");
+    insertProgram.run('Informatica', 'Programma over informatica.');
+    insertProgram.run('Informatiekunde', 'Programma over informatiekunde.');
+    insertProgram.run('Gametechnologie', 'Programma over games.');
+
+    const hobbies = ['Programming', 'Gaming', 'Chess', 'Football', 'Reading', 'Juggling', 'Anime', 'Drinking'];
+
+    const insertFakeStudent = (name, password,) => {
+        register(name, password);
+        const id = login(name, password);
+        const hobby1 = Math.round(Math.random() * (hobbies.length - 1));
+        let hobby2 = Math.round(Math.random() * (hobbies.length - 1));
+        if (hobby2 == hobby1){
+            hobby2 = (hobby2 + 1) % (hobbies.length - 1);
+        }
+
+        updateStudent(
+            id, 
+            name, 
+            18 + Math.floor(Math.random() * 20),
+            `${name}@student.uu.nl`,
+            `${hobbies[hobby1]}, ${hobbies[hobby2]}`,
+            Math.round(Math.random() * 2)
+        );
+
+        const course1 = 1 + Math.round(Math.random() * 9);
+        let course2 = 1 + Math.round(Math.random() * 9);
+        if (course2 == course1){
+            course2 = 1 + ((course2 + 1) % 9)
+        }
+
+        updateStudentCourses(id, [course1, course2]);
+    }
+    // Randomly generated names.
+    const names = [
+        'Rodrick',
+        'Gail',
+        'Jasper',
+        'Johnny',
+        'Lance',
+        'Clara',
+        'Franklyn',
+        'Stacey',
+        'German',
+        'Darell',
+        'Andre',
+        'Jonah',
+        'Virgie',
+        'Raquel',
+        'Millicent',
+        'Frances',
+        'April',
+        'Dona',
+        'Araceli',
+        'Homer',
+        'Augustine',
+        'Sheldon',
+        'Franklin',
+        'Gail',
+        'Johnnie',
+        'Leann',
+        'Latoya',
+        'Manuel',
+        'Randolph',
+        'Loyd',
+        'Angie',
+        'Shelley',
+        'Graciela',
+        'Rudy',
+        'Donald',
+        'Gay',
+        'Rickie',
+        'Leonardo',
+        'Hyman',
+        'Hai',
+        'Antione',
+        'Estela',
+        'Elba',
+        'Opal',
+        'Emmitt',
+        'Ofelia',
+        'Robyn',
+        'Alphonso',
+        'Guadalupe',
+        'Loraine']
+    for (let i = 0; i < 50; i++){
+        // Password and name are kept the same for example purposes.
+        insertFakeStudent(names[i], names[i]);
+    }
+
+    const randomUsers = db.prepare(`
+        SELECT id FROM users
+        ORDER BY RANDOM() LIMIT 30
+    `).all();
+
+    const greeting = ['Hello', 'How are you doing?', 'Whats up', 'How are things?', 'How have you been?', 'Whats new?']
+    const responses1 = ['Im great', 'Im not doing good', 'Its bad', 'Could be better', 'Amazing', 'Never better'];
+    const responses2 = ['Cool', 'Awesome', 'Love to hear it', 'Amazing', 'Fantastic', 'Not what i wanted to hear.']
+    
+    for (let i = 0; i < 20; i++) {
+        const friendID1 = randomUsers[Math.round(1 + i + Math.random() * (29 - i - 1))].id;
+        const friendID2 = randomUsers[Math.round(1 + i + Math.random() * (29 - i - 1))].id;
+
+        updateFriendRequest(randomUsers[i].id, friendID1, 'ACCEPTED');
+        updateFriendRequest(randomUsers[i].id, friendID2, 'ACCEPTED');
+
+        insertMessage(randomUsers[i].id, friendID1, greeting[Math.floor(Math.random() * (greeting.length - 1))]);
+        insertMessage(friendID1, randomUsers[i].id, responses1[Math.floor(Math.random() * (responses1.length - 1))]);
+        insertMessage(randomUsers[i].id, friendID1, responses2[Math.floor(Math.random() * (responses2.length - 1))]);
+        
+        insertMessage(randomUsers[i].id, friendID2, greeting[Math.floor(Math.random() * (greeting.length - 1))]);
+        insertMessage(friendID2, randomUsers[i].id, responses1[Math.floor(Math.random() * (responses1.length - 1))]);
+        insertMessage(randomUsers[i].id, friendID2, responses2[Math.floor(Math.random() * (responses2.length - 1))]);
+    }
+    
 };
 
 db.close()
@@ -293,6 +441,16 @@ app.post('/send-message/:targetID', (req, res) => {
     } catch (err) {
         console.log('Failed to send message!');
         console.log(err);
+    }
+});
+
+app.get('/logout', (req, res) => {
+    try {
+        req.session.destroy();
+
+        res.redirect(root + 'login.html');
+    } catch {
+        console.log('User failed to log out!');
     }
 });
 
@@ -704,7 +862,6 @@ function updateStudentCourses(userID, courses) {
 
     if (courses) {
         Object.values(courses).forEach(value => {
-            console.log(value)
             insertStudentCourse.run(userID, value)
         });
     }
