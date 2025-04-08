@@ -13,8 +13,6 @@ import * as morgan from 'morgan'
 /*TODO: 
 Must:
 1. Database invullen met 50 studenten, 10 cursusen en 3 programmas + friends + chat berichten.
-2. Logger toevoegen. (ik weet niet precies wat ze hier mee willen)
-3. Op de server van de uni hosten en runnen.
 4. Dubbel checken of de website tegen sql injecties en cross site scripting is beveiligd.
 5. Of meerdere gebruikers goed werkt. (Zowiezo niet op een pc want de sessie cookie is gedeeld vgm.)
 Kan:
@@ -132,7 +130,9 @@ app.use(session({
     }
 }))
 app.use(express.json());
-//app.use(morgan('combined'));
+
+// Logger
+app.use(morgan('combined'));
 
 // Multer for file upload
 const storage = multer.memoryStorage();
@@ -144,7 +144,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public/html')));
 
-const root = '/group49'
+const root = '/group49/'
 
 // Http requests
 // Middleware to intercept all requests to check whether the client is logged in.
@@ -160,7 +160,7 @@ app.all('*', (req, res, next) => {
             next('route');
         } else { // Session does not exists go to login
             console.log('Client not logged in redirecting to login page...')
-            res.redirect(root + '/login.html');
+            res.redirect(root + 'login.html');
         }
     } catch (err) {
         console.log('Failed to redirect user!');
@@ -176,7 +176,7 @@ app.post('/register', (req, res) => {
         console.log('Failed to register user!');
         console.log(err);
     }
-    res.redirect(root + '/register.html');
+    res.redirect(root + 'register.html');
 });
 
 // Login user request.
@@ -193,15 +193,15 @@ app.post('/login', (req, res) => {
             req.session.save();
 
             // Load profile page
-            res.redirect(root + '/profile');
+            res.redirect(root + 'profile');
 
             console.log('User has logged in!');
         } else {
-            res.redirect(root + '/login.html');
+            res.redirect(root + 'login.html');
             console.log('Incorrect username/password combination!');
         }
     } catch {
-        res.redirect(root + '/login.html');
+        res.redirect(root + 'login.html');
         console.log('Failed to log in!');
     }
 });
